@@ -15,8 +15,6 @@ User stories:
 
 - A user should advance to the enxt round if they beat the threshold
 
-- Two users should be able to play the game -- each user takes a turn,
-user who doesn't beat the threshold loses
 
 - User should be able to reset the game without refreshing the screen
 

@@ -5,3 +5,8 @@ body {
 canvas {
 	background-color: grey
 }
+
+button {
+	background-color: red;
+	
+}

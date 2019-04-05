@@ -48,6 +48,38 @@ class Falcon{
 	clear(){
 		ctx.clearRect(this.x-this.r, this.y-this.r, 2*this.r, 2*this.r)
 	}
+	checkCollision(thing){
+		// 
+		let distX = Math.abs(this.x - thing.x-thing.width/2)
+		let distY = Math.abs(this.y - thing.y-thing.width/2)
+
+		//
+		if (distX > (thing.width/2 +this.r)){
+			console.log("no collision");
+			return false
+		}
+
+		if (distY > (thing.height/2 +this.r)) {
+			console.log("no collision");
+			return false
+
+		}
+
+		if (distX <= (thing.width/2) && thing.collided ===false) {
+			console.log("collision");
+			console.log(thing);
+			thing.collided = true
+			thing.erase()
+			return true
+		}
+
+		if (distY <= (thing.height/2 && thing.collided ===false)) {
+			console.log(thing);
+			thing.collided = true
+			thing.erase()
+			return true
+		}
+	}
 }
 
 class Piggy{
@@ -58,6 +90,7 @@ class Piggy{
 		this.width = 25
 		this.height = 25
 		this.collided = false
+		this.scoreImpact = 1
 	}
 	draw(){
 		ctx.beginPath();
@@ -67,8 +100,9 @@ class Piggy{
 	}
 	erase(){
 		if (this.collided === true){
-		this.color = "grey"
-		this.draw()
+			ctx.clearRect(this.x, this.y, this.width, this.height)
+		// this.color = "grey"
+		// this.draw()
 		}
 
 	}
@@ -82,6 +116,7 @@ class Pigeon{
 		this.width =15
 		this.height = 15
 		this.collided = false
+		this.scoreImpact = -1
 	}
 	draw(){
 		ctx.beginPath();
@@ -91,8 +126,9 @@ class Pigeon{
 	}
 	erase(){
 		if (this.collided === true){
-			this.color ="grey"
-			this.draw()
+			ctx.clearRect(this.x, this.y, this.width, this.height)
+			// this.color ="grey"
+			// this.draw()
 		}
 	}
 }
@@ -109,28 +145,63 @@ const game = {
 	playerOneScore: 0,
 	playerTwoScoreBoardExists: false,
 	playerTwoScore: 0,
+	piggies:[],
+	pigeons:[],
 	createPlayerOne(){
 		const playerOneMade = new Falcon(450,200)
 		this.playerOne = playerOneMade
+		this.playerOne.draw()
 	},
 	createPlayerTwo(){
 		const playerTwoMade = new Falcon(350, 200)
 		this.playerTwo = playerTwoMade
 		this.playerTwoScoreBoardExists = true
 	},
+	//this function creates the pigs in random places, over the weekend and going
+	//into next week, think about how these could be spaced better (to prevent overlap)
+	//are there css properties to tap into? padding?
+	createPiggies(){
+		for (let i=0; i < (this.level*30)/3;i++){
+			//create pigs at random places on the map
+			let piggie = new Piggy((Math.floor(Math.random() * 600)), (Math.floor(Math.random() * 600)))
+			piggie.draw()
+			this.piggies.push(piggie)
+		}
+	},
+	createPigeons(){
+		for (let i=0; i < (this.level*25)/3;i++){
+			//create pigs at random places on the map
+			let pigeon = new Pigeon((Math.floor(Math.random() * 600)), (Math.floor(Math.random() * 600)))
+			pigeon.draw()
+			this.pigeons.push(pigeon)
+		}
+
+	},
+	checkIfPlayerOneCollidesWithPiggie(){
+		for (let i=0; i < this.piggies.length; i++){
+			if (this.playerOne.checkCollision(this.piggies[i]))
+				this.playerOneScore -= 1
+				// this.piggies[i].erase()
+		}
+	},
+	checkIfPlayerOneCollidesWithPigeon(){
+		for(let i =0; i< this.pigeons.length; i++){
+			if (this.playerOne.checkCollision(this.pigeons[i]))
+				this.playerOneScore +=1
+				// this.pigeons[i].erase()
+		}
+	},
 	decreaseTime: function (){
 		if(this.started === true){
 			this.timerHandle = setInterval(()=>{
 				this.timer -=1
-				console.log(this.timer);
+				// console.log(this.timer);
 				this.updateTimerDisplay()
 				//end the game
 				if(this.timer <= 0){
 					clearInterval(this.timerHandle)
 					console.log("game over");
 				}
-
-
 				}, 1000)
 			}
 	},
@@ -139,23 +210,24 @@ const game = {
 		timerDiv.textContent =`${this.timer}` 
 	},
 	updateScoreboard(){
-		if (playerTwoScoreBoardExists === true){
+		if (this.playerTwoScoreBoardExists === true){
 			//get and open up the player two scoreboard
 			let playerTwoScore = document.getElementById('playerTwoScoreboard')
-			playerTwoScoreboard.style.display = 'block'
+			playerTwoScore.style.display = 'block'
 
 			//get the player one scoreboard
 			let playerOneScore = document.getElementById('playerOneScoreboard')
+			playerOneScore.textContent=`${this.playerOneScore}`
 
 			//set it
-			playerOneScoreboard.textContent=`${this.playerOneScore}`
-			playerTwoScoreboard.textContent=`${this.playerTwoScoreboard}`
+			playerOneScore.textContent=`${this.playerOneScore}`
+			playerTwoScore.textContent=`${this.playerTwoScoreboard}`
 		} else{
 			//get the player one scoreboard
 			let playerOneScore = document.getElementById('playerOneScoreboard')
 
 			//set it
-			playerOneScoreboard.textContent=`${this.playerOneScore}`
+			playerOneScore.textContent=`${this.playerOneScore}`
 		}
 
 	}
@@ -163,7 +235,6 @@ const game = {
 
 // //initialState (get the divs we're going to update throughout the game, set and hide
 // them as need be)
-
 let timerDiv = document.getElementById('timer')
 let playerTwoScore = document.getElementById('playerTwoScoreboard')
 
@@ -173,9 +244,22 @@ playerTwoScoreboard.style.display = 'none'
 //we'll need event listeners -- mostly related to key strokes...
 
 timerDiv.addEventListener('click',() =>{
-	game.started= true
-	console.log(timerDiv);
-	game.decreaseTime()
+	if (game.started === false){
+			game.started= true
+			game.createPlayerOne()
+			game.createPiggies()
+			game.createPigeons()
+			console.log(timerDiv);
+			game.decreaseTime()
+			game.checkIfPlayerOneCollidesWithPiggie()
+	}
+})
+
+document.addEventListener('keydown',(event) =>{
+	game.playerOne.move(event.key)
+	game.checkIfPlayerOneCollidesWithPiggie()
+	game.checkIfPlayerOneCollidesWithPigeon()
+	game.updateScoreboard()
 })
 
 
