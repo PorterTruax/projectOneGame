@@ -1,6 +1,6 @@
 //let's kick off the canvas stuff
 
-const canvas = document.getElementById('my-Canvas')
+const canvas = document.getElementById('myCanvas')
 console.log(canvas);
 
 const ctx = canvas.getContext('2d');
@@ -97,14 +97,47 @@ class Pigeon{
 	}
 }
 
-
-const newPigeon = new Pigeon(66,66)
-newPigeon.draw()
-
-
-
-
 //we'll need a game object
+
+
+const game = {
+	level: 1,
+	timer: 60,
+	started: false,
+	playerOneScore: 0,
+	playerTwoScoreBoardExists: false,
+	playerTwoScore: 0,
+	createPlayerOne(){
+	},
+	createPlayerTwo(){
+	},
+	decreaseTime: function (){
+		if(this.started === true){
+			this.timerHandle = setInterval(()=>{
+				this.timer -=1
+				this.updateTimerDisplay()
+			}, 1000)
+			}
+	},
+	updateTimerDisplay(){
+		let timerDiv = document.getElementById('timer')
+		timerDiv.textContent =`${this.timer}` 
+	},
+
+}
+
+
+let timerDiv = document.getElementById('timer')
+console.log(timerDiv);
+
+timerDiv.addEventListener('click',() =>{
+	game.started= true
+	console.log(timerDiv);
+	game.decreaseTime()
+})
+
+
+
 
 //we'll need event listeners -- mostly related to key strokes...
 
