@@ -104,42 +104,79 @@ const game = {
 	level: 1,
 	timer: 60,
 	started: false,
+	playerOne: null,
+	playerTwo: null,
 	playerOneScore: 0,
 	playerTwoScoreBoardExists: false,
 	playerTwoScore: 0,
 	createPlayerOne(){
+		const playerOneMade = new Falcon(450,200)
+		this.playerOne = playerOneMade
 	},
 	createPlayerTwo(){
+		const playerTwoMade = new Falcon(350, 200)
+		this.playerTwo = playerTwoMade
+		this.playerTwoScoreBoardExists = true
 	},
 	decreaseTime: function (){
 		if(this.started === true){
 			this.timerHandle = setInterval(()=>{
 				this.timer -=1
+				console.log(this.timer);
 				this.updateTimerDisplay()
-			}, 1000)
+				//end the game
+				if(this.timer <= 0){
+					clearInterval(this.timerHandle)
+					console.log("game over");
+				}
+
+
+				}, 1000)
 			}
 	},
 	updateTimerDisplay(){
 		let timerDiv = document.getElementById('timer')
 		timerDiv.textContent =`${this.timer}` 
 	},
+	updateScoreboard(){
+		if (playerTwoScoreBoardExists === true){
+			//get and open up the player two scoreboard
+			let playerTwoScore = document.getElementById('playerTwoScoreboard')
+			playerTwoScoreboard.style.display = 'block'
 
+			//get the player one scoreboard
+			let playerOneScore = document.getElementById('playerOneScoreboard')
+
+			//set it
+			playerOneScoreboard.textContent=`${this.playerOneScore}`
+			playerTwoScoreboard.textContent=`${this.playerTwoScoreboard}`
+		} else{
+			//get the player one scoreboard
+			let playerOneScore = document.getElementById('playerOneScoreboard')
+
+			//set it
+			playerOneScoreboard.textContent=`${this.playerOneScore}`
+		}
+
+	}
 }
 
+// //initialState (get the divs we're going to update throughout the game, set and hide
+// them as need be)
 
 let timerDiv = document.getElementById('timer')
-console.log(timerDiv);
+let playerTwoScore = document.getElementById('playerTwoScoreboard')
+
+playerTwoScoreboard.style.display = 'none'
+
+
+//we'll need event listeners -- mostly related to key strokes...
 
 timerDiv.addEventListener('click',() =>{
 	game.started= true
 	console.log(timerDiv);
 	game.decreaseTime()
 })
-
-
-
-
-//we'll need event listeners -- mostly related to key strokes...
 
 
 //build the game/collision logic including the score updating
