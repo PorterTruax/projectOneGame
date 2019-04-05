@@ -138,7 +138,7 @@ class Pigeon{
 
 const game = {
 	level: 1,
-	timer: 60,
+	timer: 30,
 	started: false,
 	playerOne: null,
 	playerTwo: null,
@@ -147,6 +147,7 @@ const game = {
 	playerTwoScore: 0,
 	piggies:[],
 	pigeons:[],
+	levelThreshold: 1,
 	createPlayerOne(){
 		const playerOneMade = new Falcon(450,200)
 		this.playerOne = playerOneMade
@@ -200,6 +201,7 @@ const game = {
 				//end the game
 				if(this.timer <= 0){
 					clearInterval(this.timerHandle)
+					this.endLevel()
 					console.log("game over");
 				}
 				}, 1000)
@@ -229,6 +231,19 @@ const game = {
 			//set it
 			playerOneScore.textContent=`${this.playerOneScore}`
 		}
+	},
+	updateLevelThreshold(){
+		this.levelThreshold = this.level*5
+		let goalThresholdDisplay = document.getElementById('levelThreshold')
+		goalThresholdDisplay.textContent =`Goal Threshold: ${this.levelThreshold}`
+	},
+	endLevel(){
+		if (this.timer === 0 && this.playerOneScore > this.levelThreshold){
+			console.log('good job! you beat the level and this is console logging correctly')
+		} 
+		if (this.timer === 0 && this.playerOneScore < this.levelThreshold) {
+			alert("you lost!")
+		}
 
 	}
 }
@@ -242,19 +257,20 @@ playerTwoScoreboard.style.display = 'none'
 
 
 //we'll need event listeners -- mostly related to key strokes...
-
 timerDiv.addEventListener('click',() =>{
 	if (game.started === false){
 			game.started= true
 			game.createPlayerOne()
 			game.createPiggies()
 			game.createPigeons()
-			console.log(timerDiv);
+			// console.log(timerDiv);
+
 			game.decreaseTime()
 			game.checkIfPlayerOneCollidesWithPiggie()
+			game.endLevel()
+			game.updateLevelThreshold()
 	}
 })
-
 document.addEventListener('keydown',(event) =>{
 	game.playerOne.move(event.key)
 	game.checkIfPlayerOneCollidesWithPiggie()
@@ -264,8 +280,10 @@ document.addEventListener('keydown',(event) =>{
 
 
 //build the game/collision logic including the score updating
+//done
 
 //then do the timer
+//done
 
 //once the timer and score are done, set the goal threshold
 
