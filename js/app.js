@@ -170,6 +170,7 @@ const game = {
 	piggies:[],
 	pigeons:[],
 	levelThreshold: 1,
+	levelEnd: false,
 	createPlayerOne(){
 		const playerOneMade = new Falcon(450,200)
 		this.playerOne = playerOneMade
@@ -235,6 +236,8 @@ const game = {
 				// this.pigeons[i].erase()
 		}
 	},
+	//need to figure out why this function keeps running even
+	//when timer is out
 	makeNewPigsandPigeonsInterval: function (){
 		if (this.started === true){
 			this.timerHandle = setInterval(()=>{
@@ -255,6 +258,10 @@ const game = {
 				this.updateTimerDisplay()
 
 				this.makePigsAndPigeonsFly()
+
+				this.endLevel()
+
+				this.updateLevelThreshold()
 
 				//end the game
 				if(this.timer <= 0){
@@ -290,18 +297,33 @@ const game = {
 			playerOneScore.textContent=`${this.playerOneScore}`
 		}
 	},
+	endLevel(){
+		if (this.timer === 0 && this.playerOneScore >= this.levelThreshold){
+			('good job! you beat the level and this is console logging correctly')
+			this.levelEnd = true
+
+		} 
+		if (this.timer === 0 && this.playerOneScore < this.levelThreshold) {
+			console.log("whoop :( you lost the level and this is console logging correctly");
+			canvas.style.display ='none'
+		}
+	},
 	updateLevelThreshold(){
+		
 		this.levelThreshold = this.level*5
 		let goalThresholdDisplay = document.getElementById('levelThreshold')
 		goalThresholdDisplay.textContent =`Goal Threshold: ${this.levelThreshold}`
-	},
-	endLevel(){
-		if (this.timer === 0 && this.playerOneScore >= this.levelThreshold){
-			console.log('good job! you beat the level and this is console logging correctly')
-		} 
-		if (this.timer === 0 && this.playerOneScore < this.levelThreshold) {
-			console.log("whoop :( you lost the level and this is console logging crrectly");		}
-
+		
+		if (this.levelEnd === true){
+			this.level += 1
+			this.playerOneScore = 0
+			this.playerTwoScore =0
+			console.log("Level has updated")
+			let levelDisplay = document.getElementById('level')
+			levelDisplay.textContent = `Level: ${this.level}`
+			this.timer += (this.level*10)+30
+			this.levelEnd = false
+		}
 	}
 }
 
@@ -360,10 +382,11 @@ document.addEventListener('keydown',(event) =>{
 //once the timer and score are done, set the goal threshold
 //done
 
-//edit the pigs and pigeons
+//edit the pigs and pigeons so that they can "fly"
+//done
 
 // //level design (i.e. how many pigs, pigeons, goal threshold  will be altered to reflect
-// a mathematical relationship to the level number)
+// a mathematical relationship to the level number) 
 
 //build the infrastructure for multiplayer -- maybe make player number a property of
 //the bird object the commands that move the player two are different from player 1 and 
