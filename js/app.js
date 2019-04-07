@@ -292,29 +292,32 @@ const game = {
 			this.piggies.push(piggie)
 		}
 	},
-	checkIfPlayerCollidesWithPiggie(){
+	checkIfPlayerOneCollidesWithPiggie(){
 		for (let i=0; i < this.piggies.length; i++){
 			if (this.playerOne.checkCollision(this.piggies[i])){
 				this.playerOneScore -= 5
 				// this.piggies[i].erase()
 			}
 		}
-		for (let i =0; i <this.piggies.length; i++){
-			if (this.playerTwo.checkCollision(this.piggies[i])){
-				this.playerTwoScore -=5
-			}
-		}
 	},
-	checkIfPlayerCollidesWithPigeon(){
+	checkIfPlayerOneCollidesWithPigeon(){
 		for(let i =0; i< this.pigeons.length; i++){
 			if (this.playerOne.checkCollision(this.pigeons[i])){
 				this.playerOneScore +=1
-				// this.pigeons[i].erase()
 			}
 		}
+	},
+	checkIfPlayerTwoCollideswithPigeon(){
+		for (let i =0; i <this.piggies.length; i++){
+			if (this.playerTwo.checkCollision(this.pigeons[i])){
+				this.playerTwoScore +=1
+			}
+		}
+	},
+	checkIfPlayerTwoCollidesWithPiggie(){
 		for (let i =0; i <this.piggies.length; i++){
 			if (this.playerTwo.checkCollision(this.piggies[i])){
-				this.playerTwoScore +=1
+				this.playerTwoScore -=5
 			}
 		}
 	},
@@ -359,24 +362,20 @@ const game = {
 		let timerDiv = document.getElementById('timer')
 		timerDiv.textContent =`${this.timer}` 
 	},
-	updateScoreboard(){
+	updateScoreboard(){ 
+			
+			let playerOneScore = document.getElementById('playerOneScoreboard')
+			//set it
+			playerOneScore.textContent=`Player One Score: ${this.playerOneScore}`
+		
 		if (this.playerTwoScoreBoardExists === true){
+			
 			//get and open up the player two scoreboard
 			let playerTwoScore = document.getElementById('playerTwoScoreboard')
+			
 			playerTwoScore.style.display = 'block'
 
-			//get the player one scoreboard
-			let playerOneScore = document.getElementById('playerOneScoreboard')
-
-			//set it
-			playerOneScore.textContent=`Player One Score: ${this.playerOneScore}`
-			playerTwoScore.textContent=`${this.playerTwoScoreboard}`
-		} else{
-			//get the player one scoreboard
-			let playerOneScore = document.getElementById('playerOneScoreboard')
-
-			//set it
-			playerOneScore.textContent=`Player One Score: ${this.playerOneScore}`
+			playerTwoScore.textContent = `Player Two Score: ${this.playerTwoScore}`
 		}
 	},
 	endLevel(){
@@ -400,10 +399,16 @@ const game = {
 			if (this.timer === 0 
 				&& this.playerOneScore > this.playerTwoScore
 				&& this.playerOneScore > this.levelThreshold){
-				console.log("Congratulations, player one! You can keep playing.");
-
-
+					console.log("Congratulations, player one! You can keep playing.")
+					//remove player two
+					this.playerTwo.clear()
+					this.playerTwo = null
+					this.levelEnd = true 
+					congrats.style.display="block"
+					congrats.textContent= "Congrats Player One! You beat the level. Onto the next one"
 			}
+
+			
 		}
 	},
 	updateLevelThreshold(){
@@ -434,6 +439,7 @@ const game = {
 		let startGame = document.getElementById('start')
 		startGame.style.display = 'block'
 		canvas.style.display ='block'
+		startGame2Players.style.display ='block'
 
 	}
 }
@@ -460,7 +466,7 @@ const game = {
 // 	game.makePigsAndPigeonsFly()
 
 // 	//check if player one collides with pigeons,etc.
-// 	game.checkIfPlayerCollidesWithPiggie()
+// 	game.checkIfPlayerTwoCollidesWithPiggie()
 
 // 	window.requestAnimationFrame(animate)
 // }
@@ -543,6 +549,7 @@ startGame2Players.addEventListener('click',() => {
 			//update level threshold when level ends
 			game.updateLevelThreshold()
 			startGame.style.display = 'none'
+			startGame2Players.style.display='none'
 	}
 
 })
@@ -568,8 +575,14 @@ document.addEventListener('keydown',(event) =>{
     game.playerTwo.move(event.key)
   }
 
-	game.checkIfPlayerCollidesWithPiggie()
-	game.checkIfPlayerCollidesWithPigeon()
+	game.checkIfPlayerOneCollidesWithPiggie()
+	game.checkIfPlayerOneCollidesWithPigeon()
+
+	if (game.playerTwoScoreBoardExists=== true){
+		game.checkIfPlayerTwoCollideswithPigeon()
+		game.checkIfPlayerTwoCollidesWithPiggie()
+
+	}
 	game.updateScoreboard()
 })
 
