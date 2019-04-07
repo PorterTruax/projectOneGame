@@ -3,10 +3,9 @@ body {
 }
 
 canvas {
-	background-color: grey
+	background-image: url(http://upload.wikimedia.org/wikipedia/commons/c/ca/Hagalund_blue_skyscraper.jpg)
 }
 
 button {
 	background-color: red;
-	
 }

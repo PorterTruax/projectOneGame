@@ -24,22 +24,30 @@ class Falcon{
 		ctx.fill()
 	}
 	move(key){
-		if (key === "ArrowDown" && (this.y+this.r) < 600){
+		if (game.started === true 
+			&& key === "ArrowDown" 
+			&& (this.y+this.r) < 600){
 			this.clear()
 			this.y += this.speed
 			this.draw()
 		}
-		if (key ==="ArrowUp" && (this.y-this.r) > 0){
+		if (game.started === true 
+			&& key ==="ArrowUp" 
+			&& (this.y-this.r) > 0){
 			this.clear()
 			this.y-= this.speed
 			this.draw()
 		}
-		if (key ==="ArrowRight" && (this.x+this.r) < 600){
+		if (game.started === true 
+			&& key ==="ArrowRight" 
+			&& (this.x+this.r) < 800){
 			this.clear()
-			this.x+=this.speed
+			this.x += this.speed
 			this.draw()
 		}
-		if (key ==="ArrowLeft" && (this.x-this.r)> 0){
+		if (game.started === true 
+			&& key ==="ArrowLeft" 
+			&& (this.x-this.r)> 0){
 			this.clear()
 			this.x-=this.speed
 			this.draw()
@@ -88,7 +96,7 @@ class Piggy{
 		this.height = 25
 		this.collided = false
 		this.scoreImpact = 1
-		this.speed = -8
+		this.speed = -6
 	}
 	draw(){
 		ctx.beginPath();
@@ -126,7 +134,7 @@ class Pigeon{
 		this.height = 15
 		this.collided = false
 		this.scoreImpact = -1
-		this.speed = -15
+		this.speed = -5
 	}
 	draw(){
 		ctx.beginPath();
@@ -187,7 +195,7 @@ const game = {
 	createPiggies(){
 		for (let i=0; i < (this.level*30)/3;i++){
 			//create pigs at random places on the map
-			let piggie = new Piggy((Math.floor(Math.random() * 600)), (Math.floor(Math.random() * 600)))
+			let piggie = new Piggy((Math.floor(Math.random() * 800)), (Math.floor(Math.random() * 600)))
 			piggie.draw()
 			this.piggies.push(piggie)
 		}
@@ -203,7 +211,7 @@ const game = {
 	createPigeons(){
 		for (let i=0; i < (this.level*25)/3;i++){
 			//create pigs at random places on the map
-			let pigeon = new Pigeon((Math.floor(Math.random() * 600)), (Math.floor(Math.random() * 600)))
+			let pigeon = new Pigeon((Math.floor(Math.random() * 800)), (Math.floor(Math.random() * 600)))
 			pigeon.draw()
 			this.pigeons.push(pigeon)
 		}
@@ -212,12 +220,12 @@ const game = {
 	keepMakingPigsAndPigeons(){
 		//make pigs and pigeons in the lower half of map 
 		for (let i=0; i < (this.level*10)/3;i++){
-			let pigeon = new Pigeon((Math.floor(Math.random()* 600)), (Math.floor(Math.random() *200)+400))
+			let pigeon = new Pigeon((Math.floor(Math.random()* 800)), (Math.floor(Math.random() *200)+400))
 			pigeon.draw()
 			this.pigeons.push(pigeon)
 		}
 		for (let i=0; i < (this.level*5)/3;i++){
-			let piggie = new Piggy((Math.floor(Math.random() * 600)), (Math.floor(Math.random() * 200)+400))
+			let piggie = new Piggy((Math.floor(Math.random() * 800)), (Math.floor(Math.random() * 200)+400))
 			piggie.draw()
 			this.piggies.push(piggie)
 		}
@@ -240,12 +248,13 @@ const game = {
 	//when timer is out
 	makeNewPigsandPigeonsInterval: function (){
 		if (this.started === true){
-			this.timerHandle = setInterval(()=>{
-				
+			this.timerHandle = setInterval(()=>{	
 				this.keepMakingPigsAndPigeons()
 
-					if (this.timer <= 0){
+					if (this.timer <= 0 || this.started === false){
+					clearInterval(this.timerHandle)
 					console.log("Should I be here?");
+
 				}
 			}, 5000)
 		}
@@ -264,12 +273,12 @@ const game = {
 				this.updateLevelThreshold()
 
 				//end the game
-				if(this.timer <= 0){
+				if(this.timer <= 0 || this.started === false){
 					clearInterval(this.timerHandle)
 					this.endLevel()
 					console.log("game over");
 				}
-				}, 500)
+				}, 1000)
 			}
 	},
 	updateTimerDisplay(){
@@ -284,32 +293,35 @@ const game = {
 
 			//get the player one scoreboard
 			let playerOneScore = document.getElementById('playerOneScoreboard')
-			playerOneScore.textContent=`${this.playerOneScore}`
 
 			//set it
-			playerOneScore.textContent=`${this.playerOneScore}`
+			playerOneScore.textContent=`Player One Score: ${this.playerOneScore}`
 			playerTwoScore.textContent=`${this.playerTwoScoreboard}`
 		} else{
 			//get the player one scoreboard
 			let playerOneScore = document.getElementById('playerOneScoreboard')
 
 			//set it
-			playerOneScore.textContent=`${this.playerOneScore}`
+			playerOneScore.textContent=`Player One Score: ${this.playerOneScore}`
 		}
 	},
 	endLevel(){
 		if (this.timer === 0 && this.playerOneScore >= this.levelThreshold){
 			('good job! you beat the level and this is console logging correctly')
 			this.levelEnd = true
+			congrats.style.display="block"
+			congrats.textContent= "You beat the level onto the next one"
 
 		} 
 		if (this.timer === 0 && this.playerOneScore < this.levelThreshold) {
 			console.log("whoop :( you lost the level and this is console logging correctly");
 			canvas.style.display ='none'
+			lost.style.display = "block"
+			reset.style.display ='none'
+			this.started = false
 		}
 	},
 	updateLevelThreshold(){
-		
 		this.levelThreshold = this.level*5
 		let goalThresholdDisplay = document.getElementById('levelThreshold')
 		goalThresholdDisplay.textContent =`Goal Threshold: ${this.levelThreshold}`
@@ -324,20 +336,63 @@ const game = {
 			this.timer += (this.level*10)+30
 			this.levelEnd = false
 		}
+	},
+	//is there a way to do the reset without messing up the CSS?
+	resetGame(){
+		ctx.clearRect(0,0, canvas.width, canvas.height)
+		this.timer = 30
+		this.level = 1
+		let levelDisplay = document.getElementById('level')
+		levelDisplay.textContent = `Level: ${this.level}`
+		this.updateTimerDisplay()
+		this.started = false
+		let startGame = document.getElementById('start')
+		startGame.style.display = 'block'
+		canvas.style.display ='block'
+
 	}
 }
+
+//add an animation function in the global scope
+let x = 0;
+function animate() {
+
+	//createplayer one
+	game.createPlayerOne()
+	
+
+	//move pigeons/pigs
+	game.makePigsAndPigeonsFly()
+
+	//check if player one collides with pigeons,etc.
+	game.checkIfPlayerOneCollidesWithPiggie()
+
+	window.requestAnimationFrame(animate)
+}
+
+animate();
 
 // //initialState (get the divs we're going to update throughout the game, set and hide
 // them as need be)
 let timerDiv = document.getElementById('timer')
 let playerTwoScore = document.getElementById('playerTwoScoreboard')
+let congrats = document.getElementById('congratulations')
+let lost = document.getElementById('lost')
+let reset = document.getElementById('reset')
+let playAgain = document.getElementById('playAgain')
+let startGame = document.getElementById('start')
 
+
+canvas.style.display ='none'
+congrats.style.display = 'none'
+lost.style.display='none'
 playerTwoScoreboard.style.display = 'none'
 
 
 //we'll need event listeners -- mostly related to key strokes...
-timerDiv.addEventListener('click',() =>{
+startGame.addEventListener('click',() =>{
 	if (game.started === false){
+			canvas.style.display ='block'
 			game.started= true
 
 			// create characters
@@ -363,8 +418,22 @@ timerDiv.addEventListener('click',() =>{
 
 			//update level threshold when level ends
 			game.updateLevelThreshold()
+			startGame.style.display = 'none'
+
 	}
 })
+
+
+playAgain.addEventListener('click',() => {
+	game.resetGame()
+	lost.style.display = "none"
+})
+
+reset.addEventListener('click', () =>{
+	game.resetGame()
+})
+
+
 document.addEventListener('keydown',(event) =>{
 	game.playerOne.move(event.key)
 	game.checkIfPlayerOneCollidesWithPiggie()
@@ -387,6 +456,9 @@ document.addEventListener('keydown',(event) =>{
 
 // //level design (i.e. how many pigs, pigeons, goal threshold  will be altered to reflect
 // a mathematical relationship to the level number) 
+//done
+
+//build reset button
 
 //build the infrastructure for multiplayer -- maybe make player number a property of
 //the bird object the commands that move the player two are different from player 1 and 
