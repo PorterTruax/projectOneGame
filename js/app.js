@@ -23,36 +23,36 @@ class Falcon{
 		ctx.fillStyle= this.color
 		ctx.fill()
 	}
-	move(key){
-		if (game.started === true 
-			&& key === "ArrowDown" 
-			&& (this.y+this.r) < 600){
-			this.clear()
-			this.y += this.speed
-			this.draw()
-		}
-		if (game.started === true 
-			&& key ==="ArrowUp" 
-			&& (this.y-this.r) > 0){
-			this.clear()
-			this.y-= this.speed
-			this.draw()
-		}
-		if (game.started === true 
-			&& key ==="ArrowRight" 
-			&& (this.x+this.r) < 800){
-			this.clear()
-			this.x += this.speed
-			this.draw()
-		}
-		if (game.started === true 
-			&& key ==="ArrowLeft" 
-			&& (this.x-this.r)> 0){
-			this.clear()
-			this.x-=this.speed
-			this.draw()
-		}
-	}
+	// move(key){
+	// 	if (game.started === true
+	// 		&& key === "ArrowDown"
+	// 		&& (this.y+this.r) < 600){
+	// 		this.clear()
+	// 		this.y += this.speed
+	// 		this.draw()
+	// 	}
+	// 	if (game.started === true
+	// 		&& key === "ArrowUp"
+	// 		&& (this.y-this.r) > 0){
+	// 		this.clear()
+	// 		this.y-= this.speed
+	// 		this.draw()
+	// 	}
+	// 	if (game.started === true 
+	// 		&& key === "ArrowRight"
+	// 		&& (this.x+this.r) < 800){
+	// 		this.clear()
+	// 		this.x += this.speed
+	// 		this.draw()
+	// 	}
+	// 	if (game.started === true
+	// 		&& key === "ArrowLeft"
+	// 		&& (this.x-this.r) > 0){
+	// 		this.clear()
+	// 		this.x-=this.speed
+	// 		this.draw()
+	// 	}
+	// }
 	clear(){
 		ctx.clearRect(this.x-this.r, this.y-this.r, 2*this.r, 2*this.r)
 	}
@@ -95,8 +95,8 @@ class Piggy{
 		this.width = 25
 		this.height = 25
 		this.collided = false
-		this.scoreImpact = 1
-		this.speed = -6
+		this.scoreImpact = -5
+		this.speed = -10
 	}
 	draw(){
 		ctx.beginPath();
@@ -134,7 +134,7 @@ class Pigeon{
 		this.height = 15
 		this.collided = false
 		this.scoreImpact = -1
-		this.speed = -5
+		this.speed = -15
 	}
 	draw(){
 		ctx.beginPath();
@@ -182,12 +182,74 @@ const game = {
 	createPlayerOne(){
 		const playerOneMade = new Falcon(450,200)
 		this.playerOne = playerOneMade
+		this.playerOne.move = function (key){
+			if (game.started === true
+				&& key === "ArrowDown"
+				&& (this.y+this.r) < 600){
+					this.clear()
+					this.y += this.speed
+					this.draw()
+			}
+		if (game.started === true
+				&& key === "ArrowUp"
+				&& (this.y-this.r) > 0){
+					this.clear()
+					this.y-= this.speed
+					this.draw()
+			}
+		if (game.started === true 
+				&& key === "ArrowRight"
+				&& (this.x+this.r) < 800){
+					this.clear()
+					this.x += this.speed
+					this.draw()
+			}
+		if (game.started === true
+				&& key === "ArrowLeft"
+				&& (this.x-this.r) > 0){
+					this.clear()
+					this.x-=this.speed
+					this.draw()
+			}
+		}
 		this.playerOne.draw()
 	},
 	createPlayerTwo(){
 		const playerTwoMade = new Falcon(350, 200)
 		this.playerTwo = playerTwoMade
+		this.playerTwo.color = "green"
+		this.playerTwo.move = function (key){
+			if (game.started === true
+				&& key === "s"
+				&& (this.y+this.r) < 600){
+					this.clear()
+					this.y += this.speed
+					this.draw()
+			}
+		if (game.started === true
+				&& key === "w"
+				&& (this.y-this.r) > 0){
+					this.clear()
+					this.y-= this.speed
+					this.draw()
+			}
+		if (game.started === true 
+				&& key === "d"
+				&& (this.x+this.r) < 800){
+					this.clear()
+					this.x += this.speed
+					this.draw()
+			}
+		if (game.started === true
+				&& key === "a"
+				&& (this.x-this.r) > 0){
+					this.clear()
+					this.x-=this.speed
+					this.draw()
+			}
+		}
 		this.playerTwoScoreBoardExists = true
+		this.playerTwo.draw()
 	},
 	//this function creates the pigs in random places, over the weekend and going
 	//into next week, think about how these could be spaced better (to prevent overlap)
@@ -230,18 +292,30 @@ const game = {
 			this.piggies.push(piggie)
 		}
 	},
-	checkIfPlayerOneCollidesWithPiggie(){
+	checkIfPlayerCollidesWithPiggie(){
 		for (let i=0; i < this.piggies.length; i++){
-			if (this.playerOne.checkCollision(this.piggies[i]))
-				this.playerOneScore -= 1
+			if (this.playerOne.checkCollision(this.piggies[i])){
+				this.playerOneScore -= 5
 				// this.piggies[i].erase()
+			}
+		}
+		for (let i =0; i <this.piggies.length; i++){
+			if (this.playerTwo.checkCollision(this.piggies[i])){
+				this.playerTwoScore -=5
+			}
 		}
 	},
-	checkIfPlayerOneCollidesWithPigeon(){
+	checkIfPlayerCollidesWithPigeon(){
 		for(let i =0; i< this.pigeons.length; i++){
-			if (this.playerOne.checkCollision(this.pigeons[i]))
+			if (this.playerOne.checkCollision(this.pigeons[i])){
 				this.playerOneScore +=1
 				// this.pigeons[i].erase()
+			}
+		}
+		for (let i =0; i <this.piggies.length; i++){
+			if (this.playerTwo.checkCollision(this.piggies[i])){
+				this.playerTwoScore +=1
+			}
 		}
 	},
 	//need to figure out why this function keeps running even
@@ -306,19 +380,30 @@ const game = {
 		}
 	},
 	endLevel(){
-		if (this.timer === 0 && this.playerOneScore >= this.levelThreshold){
-			('good job! you beat the level and this is console logging correctly')
-			this.levelEnd = true
-			congrats.style.display="block"
-			congrats.textContent= "You beat the level onto the next one"
+		if (this.playerTwoScoreBoardExists ===false){
+			if (this.timer === 0 && this.playerOneScore >= this.levelThreshold){
+				console.log('Good, job player one! You beat the level and this is console logging correctly')
+				this.levelEnd = true
+				congrats.style.display="block"
+				congrats.textContent= "You beat the level onto the next one"
+			} 
 
-		} 
-		if (this.timer === 0 && this.playerOneScore < this.levelThreshold) {
-			console.log("whoop :( you lost the level and this is console logging correctly");
-			canvas.style.display ='none'
-			lost.style.display = "block"
-			reset.style.display ='none'
-			this.started = false
+			if (this.timer === 0 && this.playerOneScore < this.levelThreshold) {
+				console.log("Whoop :( Sorry, player one. you lost the level and this is console logging correctly");
+				canvas.style.display ='none'
+				lost.style.display = "block"
+				reset.style.display ='none'
+				this.started = false
+			}
+		}
+		else {
+			if (this.timer === 0 
+				&& this.playerOneScore > this.playerTwoScore
+				&& this.playerOneScore > this.levelThreshold){
+				console.log("Congratulations, player one! You can keep playing.");
+
+
+			}
 		}
 	},
 	updateLevelThreshold(){
@@ -329,7 +414,7 @@ const game = {
 		if (this.levelEnd === true){
 			this.level += 1
 			this.playerOneScore = 0
-			this.playerTwoScore =0
+			this.playerTwoScore = 0
 			console.log("Level has updated")
 			let levelDisplay = document.getElementById('level')
 			levelDisplay.textContent = `Level: ${this.level}`
@@ -354,23 +439,33 @@ const game = {
 }
 
 //add an animation function in the global scope
-let x = 0;
-function animate() {
+// let x = 0;
+// function animate() {
 
-	//createplayer one
-	game.createPlayerOne()
+
+// 	game.createPlayerOne()
+// 	document.addEventListener('keydown',(event) =>{
+// 	game.playerOne.move(event.key)
+// 	})
+
+// 	//createplayer one
+// 	game.playerOne.move()
+// 	ctx.clearRect(0,0, canvas.width, canvas.height)
+// 	document.addEventListener('keydown',(event) =>{
+// 	game.playerOne.move(event.key)
+// 	})
 	
 
-	//move pigeons/pigs
-	game.makePigsAndPigeonsFly()
+// 	//move pigeons/pigs
+// 	game.makePigsAndPigeonsFly()
 
-	//check if player one collides with pigeons,etc.
-	game.checkIfPlayerOneCollidesWithPiggie()
+// 	//check if player one collides with pigeons,etc.
+// 	game.checkIfPlayerCollidesWithPiggie()
 
-	window.requestAnimationFrame(animate)
-}
+// 	window.requestAnimationFrame(animate)
+// }
 
-animate();
+// animate();
 
 // //initialState (get the divs we're going to update throughout the game, set and hide
 // them as need be)
@@ -381,6 +476,7 @@ let lost = document.getElementById('lost')
 let reset = document.getElementById('reset')
 let playAgain = document.getElementById('playAgain')
 let startGame = document.getElementById('start')
+let startGame2Players = document.getElementById('start2')
 
 
 canvas.style.display ='none'
@@ -410,9 +506,6 @@ startGame.addEventListener('click',() =>{
 			//roll the timer
 			game.decreaseTime()
 
-			//check if player is colliding with pig
-			game.checkIfPlayerOneCollidesWithPiggie()
-
 			//end level
 			game.endLevel()
 
@@ -421,6 +514,37 @@ startGame.addEventListener('click',() =>{
 			startGame.style.display = 'none'
 
 	}
+})
+
+startGame2Players.addEventListener('click',() => {
+	if (game.started === false){
+			canvas.style.display ='block'
+			game.started= true
+
+			// create characters
+			game.createPlayerOne()
+			game.createPlayerTwo()
+			game.createPiggies()
+			game.createPigeons()
+			// console.log(timerDiv);
+			
+			//make pigs/pigeons move
+			game.makePigsAndPigeonsFly()
+
+			//keep making pigs/pigeons on the map oninterval
+			game.makeNewPigsandPigeonsInterval()
+
+			//roll the timer
+			game.decreaseTime()
+
+			//end level
+			game.endLevel()
+
+			//update level threshold when level ends
+			game.updateLevelThreshold()
+			startGame.style.display = 'none'
+	}
+
 })
 
 
@@ -435,9 +559,17 @@ reset.addEventListener('click', () =>{
 
 
 document.addEventListener('keydown',(event) =>{
-	game.playerOne.move(event.key)
-	game.checkIfPlayerOneCollidesWithPiggie()
-	game.checkIfPlayerOneCollidesWithPigeon()
+	
+	 if(['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(event.key)) {
+    game.playerOne.move(event.key)
+  }
+  	
+  	if(['w', 'a', 's', 'd'].includes(event.key)) {
+    game.playerTwo.move(event.key)
+  }
+
+	game.checkIfPlayerCollidesWithPiggie()
+	game.checkIfPlayerCollidesWithPigeon()
 	game.updateScoreboard()
 })
 
@@ -459,6 +591,7 @@ document.addEventListener('keydown',(event) =>{
 //done
 
 //build reset button
+//done
 
 //build the infrastructure for multiplayer -- maybe make player number a property of
 //the bird object the commands that move the player two are different from player 1 and 
