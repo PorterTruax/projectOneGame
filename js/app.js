@@ -12,7 +12,7 @@ class Falcon{
 		this.playerOne = false
 		this.playerTwo = false
 		this.color = "pink"
-		this.speed=10
+		this.speed= 10
 		this.x=x
 		this.y=y
 		this.r = 15
@@ -23,44 +23,16 @@ class Falcon{
 		ctx.fillStyle= this.color
 		ctx.fill()
 	}
-	// move(key){
-	// 	if (game.started === true
-	// 		&& key === "ArrowDown"
-	// 		&& (this.y+this.r) < 600){
-	// 		this.clear()
-	// 		this.y += this.speed
-	// 		this.draw()
-	// 	}
-	// 	if (game.started === true
-	// 		&& key === "ArrowUp"
-	// 		&& (this.y-this.r) > 0){
-	// 		this.clear()
-	// 		this.y-= this.speed
-	// 		this.draw()
-	// 	}
-	// 	if (game.started === true 
-	// 		&& key === "ArrowRight"
-	// 		&& (this.x+this.r) < 800){
-	// 		this.clear()
-	// 		this.x += this.speed
-	// 		this.draw()
-	// 	}
-	// 	if (game.started === true
-	// 		&& key === "ArrowLeft"
-	// 		&& (this.x-this.r) > 0){
-	// 		this.clear()
-	// 		this.x-=this.speed
-	// 		this.draw()
-	// 	}
-	// }
 	clear(){
 		ctx.clearRect(this.x-this.r, this.y-this.r, 2*this.r, 2*this.r)
 	}
 	checkCollision(thing){
-		// REVIEW THIS WITH REUBEN ON MONDAY
+		// Code c/o of stack overflow. We're taking half of the distance between the circle/rect's
+		//x and y coordinates. 
+		//If the distance between these is less than half of the rectangle's width and height plus
+		// the circle's radius then  the two are colliding
 		let distX = Math.abs(this.x - thing.x-thing.width/2)
 		let distY = Math.abs(this.y - thing.y-thing.width/2)
-
 		//
 		if (distX > (thing.width/2 +this.r)){
 			// console.log("no collision");
@@ -96,7 +68,7 @@ class Piggy{
 		this.height = 25
 		this.collided = false
 		this.scoreImpact = -5
-		this.speed = -10
+		this.speed = -8
 	}
 	draw(){
 		ctx.beginPath();
@@ -134,7 +106,7 @@ class Pigeon{
 		this.height = 15
 		this.collided = false
 		this.scoreImpact = -1
-		this.speed = -15
+		this.speed = -8
 	}
 	draw(){
 		ctx.beginPath();
@@ -179,13 +151,14 @@ const game = {
 	pigeons:[],
 	levelThreshold: 1,
 	levelEnd: false,
+	endCreatingPigsPigeons: false,
 	createPlayerOne(){
 		const playerOneMade = new Falcon(450,200)
 		this.playerOne = playerOneMade
 		this.playerOne.move = function (key){
 			if (game.started === true
 				&& key === "ArrowDown"
-				&& (this.y+this.r) < 600){
+				&& (this.y+this.r) < canvas.height){
 					this.clear()
 					this.y += this.speed
 					this.draw()
@@ -199,7 +172,7 @@ const game = {
 			}
 		if (game.started === true 
 				&& key === "ArrowRight"
-				&& (this.x+this.r) < 800){
+				&& (this.x+this.r) < canvas.width){
 					this.clear()
 					this.x += this.speed
 					this.draw()
@@ -221,7 +194,7 @@ const game = {
 		this.playerTwo.move = function (key){
 			if (game.started === true
 				&& key === "s"
-				&& (this.y+this.r) < 600){
+				&& (this.y+this.r) < canvas.height){
 					this.clear()
 					this.y += this.speed
 					this.draw()
@@ -235,7 +208,7 @@ const game = {
 			}
 		if (game.started === true 
 				&& key === "d"
-				&& (this.x+this.r) < 800){
+				&& (this.x+this.r) < canvas.width){
 					this.clear()
 					this.x += this.speed
 					this.draw()
@@ -319,21 +292,6 @@ const game = {
 			if (this.playerTwo.checkCollision(this.piggies[i])){
 				this.playerTwoScore -=5
 			}
-		}
-	},
-	//need to figure out why this function keeps running even
-	//when timer is out
-	makeNewPigsandPigeonsInterval: function (){
-		if (this.started === true){
-			this.timerHandle = setInterval(()=>{	
-				this.keepMakingPigsAndPigeons()
-
-					if (this.timer <= 0 || this.started === false){
-					clearInterval(this.timerHandle)
-					console.log("Should I be here?");
-
-				}
-			}, 5000)
 		}
 	},
 	decreaseTime: function (){
@@ -453,46 +411,58 @@ const game = {
 			this.levelEnd = false
 		}
 	},
+	//need to figure out why this function keeps running even
+	//even when timer is out
+	makeNewPigsandPigeonsInterval: function (){
+		if (this.started === true){
+			this.timerHandle = setInterval(()=>{	
+				this.keepMakingPigsAndPigeons()
+
+					if (this.timer <= 0 || this.endCreatingPigsPigeons === true){
+					clearInterval(this.timerHandle)
+					console.log("Should I be here?");
+				}
+			}, 5000)
+		}
+	},
 	//is there a way to do the reset without messing up the CSS?
 	resetGame(){
 		ctx.clearRect(0,0, canvas.width, canvas.height)
 		this.timer = 30
 		this.level = 1
-		let levelDisplay = document.getElementById('level')
-		levelDisplay.textContent = `Level: ${this.level}`
-		this.updateTimerDisplay()
+		this.endCreatingPigsPigeons = true
 		this.started = false
+		let levelDisplay = document.getElementById('level')
+		levelDisplay.textContent = `Level: ${this.level}`		
+		this.updateTimerDisplay()
+
+		this.playerTwoScore = 0
+		this.playerOneScore = 0
+		this.updateScoreboard()
+
+		this.playerTwoScoreBoardExists = false
+		
 		let startGame = document.getElementById('start')
 		startGame.style.display = 'block'
 		canvas.style.display ='block'
 		startGame2Players.style.display ='block'
 
+		playerTwoScoreboard.style.display = 'none'
+
 	}
 }
 
-//add an animation function in the global scope
+// //add an animation function in the global scope
 // let x = 0;
 // function animate() {
-
-
+// 	//create the players
 // 	game.createPlayerOne()
-// 	document.addEventListener('keydown',(event) =>{
-// 	game.playerOne.move(event.key)
-// 	})
+// 	if (game.playerTwoScoreBoardExists === true){
+// 		game.createPlayerTwo()
+// 	}
 
-// 	//createplayer one
-// 	game.playerOne.move()
-// 	ctx.clearRect(0,0, canvas.width, canvas.height)
-// 	document.addEventListener('keydown',(event) =>{
-// 	game.playerOne.move(event.key)
-// 	})
-	
-
-// 	//move pigeons/pigs
-// 	game.makePigsAndPigeonsFly()
-
-// 	//check if player one collides with pigeons,etc.
-// 	game.checkIfPlayerTwoCollidesWithPiggie()
+// 	game.playerOne.move(playerKey)
+// 	game.playerTwo.move(player2Key)
 
 // 	window.requestAnimationFrame(animate)
 // }
@@ -514,7 +484,7 @@ let startGame2Players = document.getElementById('start2')
 canvas.style.display ='none'
 congrats.style.display = 'none'
 lost.style.display='none'
-playerTwoScoreboard.style.display = 'none'
+
 
 
 //we'll need event listeners -- mostly related to key strokes...
@@ -522,6 +492,7 @@ startGame.addEventListener('click',() =>{
 	if (game.started === false){
 			canvas.style.display ='block'
 			game.started= true
+			game.endCreatingPigsPigeons = false
 
 			// create characters
 			game.createPlayerOne()
@@ -552,6 +523,7 @@ startGame2Players.addEventListener('click',() => {
 	if (game.started === false){
 			canvas.style.display ='block'
 			game.started= true
+			game.endCreatingPigsPigeons = false
 
 			// create characters
 			game.createPlayerOne()
@@ -561,7 +533,7 @@ startGame2Players.addEventListener('click',() => {
 			// console.log(timerDiv);
 			
 			//make pigs/pigeons move
-			game.makePigsAndPigeonsFly()
+			// game.makePigsAndPigeonsFly()
 
 			//keep making pigs/pigeons on the map oninterval
 			game.makeNewPigsandPigeonsInterval()
@@ -593,27 +565,42 @@ reset.addEventListener('click', () =>{
 
 
 document.addEventListener('keydown',(event) =>{
-	
-	 if(['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(event.key)) {
-    game.playerOne.move(event.key)
-  }
-  	
-  	if(['w', 'a', 's', 'd'].includes(event.key)) {
-    game.playerTwo.move(event.key)
-  }
-
-  	if (game.playerOne !== null){
-  		game.checkIfPlayerOneCollidesWithPiggie()
+	if (game.playerOne !== null){
+ 		if(['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(event.key)) {
+    		game.playerOne.move(event.key)
+ 	 	}
+		game.playerOne.move(event.key)
+		game.checkIfPlayerOneCollidesWithPiggie()
 		game.checkIfPlayerOneCollidesWithPigeon()
 
-  	}
+	}
 
 	if (game.playerTwoScoreBoardExists === true){
+		if(['w', 'a', 's', 'd'].includes(event.key)) {
+    		game.playerTwo.move(event.key)
+ 		}
 		game.checkIfPlayerTwoCollideswithPigeon()
 		game.checkIfPlayerTwoCollidesWithPiggie()
-	}
+		game.playerTwo.move(event.key)
+		}
+
 	game.updateScoreboard()
 })
+
+// add an animation function in the global scope
+let x = 0;
+function animate() {
+
+	// game.playerOne.move()
+
+// game.makeNewPigsandPigeonsInterval()
+
+// game.makePigsAndPigeonsFly()
+
+window.requestAnimationFrame(animate)
+}
+
+// animate();
 
 
 //build the game/collision logic including the score updating
@@ -634,6 +621,8 @@ document.addEventListener('keydown',(event) =>{
 
 //build reset button
 //done
+
+//if both 
 
 //build the infrastructure for multiplayer -- maybe make player number a property of
 //the bird object the commands that move the player two are different from player 1 and 
