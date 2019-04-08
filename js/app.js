@@ -308,7 +308,7 @@ const game = {
 		}
 	},
 	checkIfPlayerTwoCollideswithPigeon(){
-		for (let i =0; i <this.piggies.length; i++){
+		for (let i =0; i <this.pigeons.length; i++){
 			if (this.playerTwo.checkCollision(this.pigeons[i])){
 				this.playerTwoScore +=1
 			}
@@ -398,17 +398,27 @@ const game = {
 		else {
 			if (this.timer === 0 
 				&& this.playerOneScore > this.playerTwoScore
-				&& this.playerOneScore > this.levelThreshold){
+				&& this.playerOneScore >= this.levelThreshold){
 					console.log("Congratulations, player one! You can keep playing.")
 					//remove player two
 					this.playerTwo.clear()
 					this.playerTwo = null
 					this.levelEnd = true 
 					congrats.style.display="block"
-					congrats.textContent= "Congrats Player One! You beat the level. Onto the next one"
+					congrats.textContent= "Congrats Player One! You beat the level. Onto the next one."
+			}
+			if (this.timer === 0
+				&& this.playerTwoScore > this.playerOneScore
+				&& this.playerTwoScore >= this.levelThreshold){
+				console.log("Congratulations player two! You can keep playing.")
+				this.playerOne.clear()
+				this.levelEnd = true
+				congrats.style.display="block"
+				this.playerOne = null
+				congrats.textContent = "Congrats Player Two! You beat the level. Onto the next one."
 			}
 
-			
+
 		}
 	},
 	updateLevelThreshold(){
@@ -548,6 +558,7 @@ startGame2Players.addEventListener('click',() => {
 
 			//update level threshold when level ends
 			game.updateLevelThreshold()
+			
 			startGame.style.display = 'none'
 			startGame2Players.style.display='none'
 	}
@@ -575,13 +586,15 @@ document.addEventListener('keydown',(event) =>{
     game.playerTwo.move(event.key)
   }
 
-	game.checkIfPlayerOneCollidesWithPiggie()
-	game.checkIfPlayerOneCollidesWithPigeon()
+  	if (game.playerOne !== null){
+  		game.checkIfPlayerOneCollidesWithPiggie()
+		game.checkIfPlayerOneCollidesWithPigeon()
 
-	if (game.playerTwoScoreBoardExists=== true){
+  	}
+
+	if (game.playerTwoScoreBoardExists === true){
 		game.checkIfPlayerTwoCollideswithPigeon()
 		game.checkIfPlayerTwoCollidesWithPiggie()
-
 	}
 	game.updateScoreboard()
 })
