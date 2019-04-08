@@ -16,6 +16,13 @@ class Falcon{
 		this.x=x
 		this.y=y
 		this.r = 15
+		this.direction = {
+			up: false,
+			down: false,
+			//come back and test this
+			left: false,
+			right: false
+		}
 	}
 	draw(){
 		ctx.beginPath()
@@ -26,6 +33,42 @@ class Falcon{
 	clear(){
 		ctx.clearRect(this.x-this.r, this.y-this.r, 2*this.r, 2*this.r)
 	}
+	move(){
+		if (this.direction.up === true) {
+			this.y -= this.speed;
+			this.clear()
+			this.draw()
+		}
+    	if(this.direction.left === true) {
+    		this.x -= this.speed;
+    		this.clear
+    		this.draw()
+    	}
+
+    	if(this.direction.right === true) { 
+    		this.x += this.speed;
+    		this.clear()
+    		this.draw()
+    	} 
+
+    	if(this.direction.down === true) { 
+    		this.y += this.speed;
+    		this.clear()
+    		this.draw()
+    	}
+	}
+	// setDirection(key){
+	// 	if(key == "ArrowUp" || key == "w")this.direction.up = true;
+	// 	if(key == "ArrowLeft" || key == "a")this.direction.left = true;
+	// 	if(key == "ArrowDown" || key == "s")this.direction.down = true;
+	// 	if(key == "ArrowRight" || key == "d")this.direction.right = true;
+	// }
+	// unsetDirection(key){
+	// 	if(key == "ArrowUp" || key == "w")this.direction.up = false;
+	// 	if(key == "ArrowLeft" || key == "a")this.direction.left = false;
+	// 	if(key == "ArrowDown" || key == "s")this.direction.down = false;
+	// 	if(key == "ArrowRight" || key == "d")this.direction.right = false;
+	// }
 	checkCollision(thing){
 		//collision from the left
 		if ((this.x + this.r) >= thing.x
@@ -65,37 +108,6 @@ class Falcon{
 				thing.erase()
 				return true
 		}
-
-
-		// Code c/o of stack overflow. We're taking half of the distance between the circle/rect's
-		//x and y coordinates. 
-		//If the distance between these is less than half of the rectangle's width and height plus
-		// the circle's radius then  the two are colliding
-		// let distX = Math.abs(this.x - thing.x-thing.width/2)
-		// let distY = Math.abs(this.y - thing.y-thing.width/2)
-		// //
-		// if (distX > (thing.width/2 +this.r)){
-		// 	// console.log("no collision");
-		// 	return false
-		// }
-		// if (distY > (thing.height/2 +this.r)) {
-		// 	// console.log("no collision");
-		// 	return false
-
-		// }
-		// if (distX <= (thing.width/2) && thing.collided ===false) {
-		// 	// console.log("collision");
-		// 	// console.log(thing);
-		// 	thing.collided = true
-		// 	thing.erase()
-		// 	return true
-		// }
-		// if (distY <= (thing.height/2 && thing.collided ===false)) {
-		// 	// console.log(thing);
-		// 	thing.collided = true
-		// 	thing.erase()
-		// 	return true
-		// }
 	}
 }
 
@@ -108,7 +120,7 @@ class Piggy{
 		this.height = 25
 		this.collided = false
 		this.scoreImpact = -5
-		this.speed = -8
+		this.speed = -1
 	}
 	draw(){
 		ctx.beginPath();
@@ -146,7 +158,7 @@ class Pigeon{
 		this.height = 15
 		this.collided = false
 		this.scoreImpact = -1
-		this.speed = -8
+		this.speed = -1
 	}
 	draw(){
 		ctx.beginPath();
@@ -180,7 +192,7 @@ class Pigeon{
 
 const game = {
 	level: 1,
-	timer: 30,
+	timer: 300,
 	started: false,
 	playerOne: null,
 	playerTwo: null,
@@ -193,80 +205,15 @@ const game = {
 	levelEnd: false,
 	endCreatingPigsPigeons: false,
 	createPlayerOne(){
-		const playerOneMade = new Falcon(450,200)
-		this.playerOne = playerOneMade
-		this.playerOne.move = function (key){
-			if (game.started === true
-				&& key === "ArrowDown"
-				&& (this.y+this.r) < canvas.height){
-					this.clear()
-					this.y += this.speed
-					this.draw()
-			}
-		if (game.started === true
-				&& key === "ArrowUp"
-				&& (this.y-this.r) > 0){
-					this.clear()
-					this.y-= this.speed
-					this.draw()
-			}
-		if (game.started === true 
-				&& key === "ArrowRight"
-				&& (this.x+this.r) < canvas.width){
-					this.clear()
-					this.x += this.speed
-					this.draw()
-			}
-		if (game.started === true
-				&& key === "ArrowLeft"
-				&& (this.x-this.r) > 0){
-					this.clear()
-					this.x-=this.speed
-					this.draw()
-			}
-		}
+		this.playerOne = new Falcon(450,200)
 		this.playerOne.draw()
 	},
 	createPlayerTwo(){
-		const playerTwoMade = new Falcon(350, 200)
-		this.playerTwo = playerTwoMade
+		this.playerTwo = new Falcon(350, 200)
 		this.playerTwo.color = "green"
-		this.playerTwo.move = function (key){
-			if (game.started === true
-				&& key === "s"
-				&& (this.y+this.r) < canvas.height){
-					this.clear()
-					this.y += this.speed
-					this.draw()
-			}
-		if (game.started === true
-				&& key === "w"
-				&& (this.y-this.r) > 0){
-					this.clear()
-					this.y-= this.speed
-					this.draw()
-			}
-		if (game.started === true 
-				&& key === "d"
-				&& (this.x+this.r) < canvas.width){
-					this.clear()
-					this.x += this.speed
-					this.draw()
-			}
-		if (game.started === true
-				&& key === "a"
-				&& (this.x-this.r) > 0){
-					this.clear()
-					this.x-=this.speed
-					this.draw()
-			}
-		}
 		this.playerTwoScoreBoardExists = true
 		this.playerTwo.draw()
 	},
-	//this function creates the pigs in random places, over the weekend and going
-	//into next week, think about how these could be spaced better (to prevent overlap)
-	//are there css properties to tap into? padding?
 	createPiggies(){
 		for (let i=0; i < (this.level*10)/3;i++){
 			//create pigs at random places on the map
@@ -458,7 +405,7 @@ const game = {
 			this.timerHandle = setInterval(()=>{	
 				this.keepMakingPigsAndPigeons()
 
-					if (this.timer <= 0 || this.endCreatingPigsPigeons === true){
+					if (this.timer <= 0){
 					clearInterval(this.timerHandle)
 					console.log("Should I be here?");
 				}
@@ -469,9 +416,8 @@ const game = {
 	//is there a way to do the reset without messing up the CSS?
 	resetGame(){
 		ctx.clearRect(0,0, canvas.width, canvas.height)
-		this.timer = 30
+		this.timer = 0
 		this.level = 1
-		this.endCreatingPigsPigeons = true
 		this.started = false
 		let levelDisplay = document.getElementById('level')
 		levelDisplay.textContent = `Level: ${this.level}`		
@@ -487,7 +433,6 @@ const game = {
 		startGame.style.display = 'block'
 		canvas.style.display ='block'
 		startGame2Players.style.display ='block'
-
 		playerTwoScoreboard.style.display = 'none'
 
 	}
@@ -522,6 +467,14 @@ let startGame = document.getElementById('start')
 let startGame2Players = document.getElementById('start2')
 
 
+function clearCanvas() {
+  // you can erase smaller parts or just one shape
+  // for convenience we erase it all
+  // this is usually what you want
+  ctx.clearRect(0, 0, canvas.width, canvas.height)  
+}
+
+
 canvas.style.display ='none'
 congrats.style.display = 'none'
 lost.style.display='none'
@@ -532,7 +485,7 @@ lost.style.display='none'
 startGame.addEventListener('click',() =>{
 	if (game.started === false){
 			canvas.style.display ='block'
-			game.started= true
+			game.started = true
 			game.endCreatingPigsPigeons = false
 
 			// create characters
@@ -607,41 +560,109 @@ reset.addEventListener('click', () =>{
 
 document.addEventListener('keydown',(event) =>{
 	if (game.playerOne !== null){
-		console.log("Player one exists and the keystrokes should console log");
- 		if(['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(event.key)) {
-    		game.playerOne.move(event.key)
-    		console.log("Keystrokes are console logging", event.key);
- 	 	}
-		game.checkIfPlayerOneCollidesWithPiggie()
-		game.checkIfPlayerOneCollidesWithPigeon()
+ 		// if(['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(event.key)) {
+ 			if (event.key === 'ArrowUp'){
+ 				game.playerOne.direction.up = true
+ 			}
+ 			if (event.key === 'ArrowDown'){
+ 				game.playerOne.direction.down = true
+ 			}
+ 			if (event.key === 'ArrowRight'){
+ 				game.playerOne.direction.right = true
+ 			}
+ 			if (event.key === 'ArrowLeft'){
+ 				game.playerOne.direction.left = true
+ 			}	
 
+ 	 	// }
+ 	 	// if(event.key === "ArrowDown") player1.setDirection('down'
 	}
 
 	if (game.playerTwoScoreBoardExists === true){
-		console.log("PlayerTwoScoreboard exists and keystrokes shuld console log");
-		if(['w', 'a', 's', 'd'].includes(event.key)) {
-    		console.log("Keystrokes are console logging", event.key);
-    		game.playerTwo.move(event.key)
-
+		// if(['w', 'a', 's', 'd'].includes(event.key)) {
+			if (event.key === 'w'){
+ 				game.playerTwo.direction.up = true
+ 			}
+ 			if (event.key === 's'){
+ 				game.playerTwo.direction.down = true
+ 			}
+ 			if (event.key === 'd'){
+ 				game.playerTwo.direction.right = true
+ 			}
+ 			if (event.key === 'a'){
+ 				game.playerTwo.direction.left = true
+ 			}
  		}
-		game.checkIfPlayerTwoCollideswithPigeon()
-		game.checkIfPlayerTwoCollidesWithPiggie()
-		}
+	// }
 
-	game.updateScoreboard()
 })
+
+document.addEventListener('keyup', (event) =>{
+	if(game.playerOne !== null){
+		// if(['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(event.key)) {
+			if (event.key === 'ArrowUp'){
+ 				game.playerOne.direction.up = false
+ 			}
+ 			if (event.key === 'ArrowDown'){
+ 				game.playerOne.direction.down = false
+ 			}
+ 			if (event.key === 'ArrowRight'){
+ 				game.playerOne.direction.right = false
+ 			}
+ 			if (event.key === 'ArrowLeft'){
+ 				game.playerOne.direction.left = false
+			}
+		// }
+	}
+
+	if (game.playerTwoScoreBoardExists === true){
+		// if(['w', 'a', 's', 'd'].includes(event.key)) {
+			if (event.key === 'w'){
+ 				game.playerTwo.direction.up = false
+ 			}
+ 			if (event.key === 's'){
+ 				game.playerTwo.direction.down = false
+ 			}
+ 			if (event.key === 'd'){
+ 				game.playerTwo.direction.right = false
+ 			}
+ 			if (event.key === 'a'){
+ 				game.playerTwo.direction.left = false
+ 			}
+ 		}
+ 	// }
+})
+
 
 // add an animation function in the global scope
 let x = 0;
 function animate() {
+	if (game.started === true){
+		game.playerOne.move()
 
-	// game.playerOne.move()
+		game.checkIfPlayerOneCollidesWithPiggie()
+		game.checkIfPlayerOneCollidesWithPigeon()
+		
+		if (game.playerTwoScoreBoardExists === true){
+			game.playerTwo.move()
+			clearCanvas()
+			game.playerTwo.draw()
+			game.playerOne.draw()
 
-	game.makePigsAndPigeonsFly()
+			game.checkIfPlayerTwoCollideswithPigeon()
+			game.checkIfPlayerTwoCollidesWithPiggie()
+		}
+
+		game.makePigsAndPigeonsFly()
+
+	}
 
 	window.requestAnimationFrame(animate)
-
 }
+
+console.log(game.playerOne);
+console.log(game.playerTwo);
+
 
 animate();
 
@@ -670,3 +691,35 @@ animate();
 //the bird object the commands that move the player two are different from player 1 and 
 //player two scoreboard gets updated.... rather then have the players go in rounds
 //have the players play simultaneously
+
+
+// this.playerOne.move = function(key){
+// 	if (game.started === true
+// 		&& key === "ArrowDown"
+// 		&& (this.y+this.r) < canvas.height){
+// 			this.clear()
+// 			this.y += this.speed
+// 			this.draw()
+// 	}
+// if (game.started === true
+// 		&& key === "ArrowUp"
+// 		&& (this.y-this.r) > 0){
+// 			this.clear()
+// 			this.y-= this.speed
+// 			this.draw()
+// 	}
+// if (game.started === true 
+// 		&& key === "ArrowRight"
+// 		&& (this.x+this.r) < canvas.width){
+// 			this.clear()
+// 			this.x += this.speed
+// 			this.draw()
+// 	}
+// if (game.started === true
+// 		&& key === "ArrowLeft"
+// 		&& (this.x-this.r) > 0){
+// 			this.clear()
+// 			this.x-=this.speed
+// 			this.draw()
+// 	}
+// }
