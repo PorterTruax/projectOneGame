@@ -397,7 +397,7 @@ const game = {
 		}
 		else {
 			if (this.timer === 0 
-				&& this.playerOneScore > this.playerTwoScore
+				&& this.playerTwoScore < this.levelThreshold
 				&& this.playerOneScore >= this.levelThreshold){
 					console.log("Congratulations, player one! You can keep playing.")
 					//remove player two
@@ -408,16 +408,32 @@ const game = {
 					congrats.textContent= "Congrats Player One! You beat the level. Onto the next one."
 			}
 			if (this.timer === 0
-				&& this.playerTwoScore > this.playerOneScore
+				&& this.playerOneScore < this.levelThreshold
 				&& this.playerTwoScore >= this.levelThreshold){
-				console.log("Congratulations player two! You can keep playing.")
-				this.playerOne.clear()
-				this.levelEnd = true
-				congrats.style.display="block"
-				this.playerOne = null
-				congrats.textContent = "Congrats Player Two! You beat the level. Onto the next one."
+					console.log("Congratulations player two! You can keep playing.")
+					this.playerOne.clear()
+					this.levelEnd = true
+					congrats.style.display="block"
+					this.playerOne = null
+					congrats.textContent = "Congrats Player Two! You beat the level. Onto the next one."
+			
 			}
+			if (this.timer === 0
+				&& this.playerOneScore < this.levelThreshold
+				&& this.playerTwoScore < this.levelThreshold){
+					console.log("Neither player advances");
+					canvas.style.display ='none'
+					lost.style.display = "block"
+					this.started = false
+			}
+			if (this.timer === 0
+				&& this.playerOneScore >= this.levelThreshold
+				&& this.playerTwoScore >= this.levelThreshold){
+					console.log("Both players advance!");
+					this.levelEnd = true
+					congrats.textContent = "Congrats! Both players advance!"
 
+			}
 
 		}
 	},
