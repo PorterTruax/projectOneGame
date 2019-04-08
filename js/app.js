@@ -27,35 +27,75 @@ class Falcon{
 		ctx.clearRect(this.x-this.r, this.y-this.r, 2*this.r, 2*this.r)
 	}
 	checkCollision(thing){
+		//collision from the left
+		if ((this.x + this.r) >= thing.x
+			&& this.y >= thing.y
+			&& this.y <= (thing.height +thing.y)
+			&& (this.x+this.r) <= thing.x + thing.width){
+				thing.collided = true
+				thing.erase()
+				return true
+		}
+		//collision from above
+		if ((this.y+this.r) >= thing.y
+			&& (this.y +this.r) <= thing.y + thing.height
+			&& this.x >= thing.x
+			&& this.x <= (thing.x +thing.width)){
+				thing.collided = true
+				thing.erase()
+				return true
+		}
+
+		//collision from right
+		if ((this.x-this.r)<= (thing.x +thing.width)
+			&& (this.x-this.r) >= (thing.x)
+			&& (this.y) >= thing.y
+			&& (this.y) <= (thing.y+thing.height)){
+				thing.collided = true
+				thing.erase()
+				return true
+			}
+
+		//collision from below
+		if ((this.y-this.r) <= (thing.y+thing.height)
+			&& (this.y-this.r) >= thing.y
+			&& this.x >= thing.x
+			&& this.x <= (thing.x + thing.width)){
+				thing.collided = true
+				thing.erase()
+				return true
+		}
+
+
 		// Code c/o of stack overflow. We're taking half of the distance between the circle/rect's
 		//x and y coordinates. 
 		//If the distance between these is less than half of the rectangle's width and height plus
 		// the circle's radius then  the two are colliding
-		let distX = Math.abs(this.x - thing.x-thing.width/2)
-		let distY = Math.abs(this.y - thing.y-thing.width/2)
-		//
-		if (distX > (thing.width/2 +this.r)){
-			// console.log("no collision");
-			return false
-		}
-		if (distY > (thing.height/2 +this.r)) {
-			// console.log("no collision");
-			return false
+		// let distX = Math.abs(this.x - thing.x-thing.width/2)
+		// let distY = Math.abs(this.y - thing.y-thing.width/2)
+		// //
+		// if (distX > (thing.width/2 +this.r)){
+		// 	// console.log("no collision");
+		// 	return false
+		// }
+		// if (distY > (thing.height/2 +this.r)) {
+		// 	// console.log("no collision");
+		// 	return false
 
-		}
-		if (distX <= (thing.width/2) && thing.collided ===false) {
-			// console.log("collision");
-			// console.log(thing);
-			thing.collided = true
-			thing.erase()
-			return true
-		}
-		if (distY <= (thing.height/2 && thing.collided ===false)) {
-			// console.log(thing);
-			thing.collided = true
-			thing.erase()
-			return true
-		}
+		// }
+		// if (distX <= (thing.width/2) && thing.collided ===false) {
+		// 	// console.log("collision");
+		// 	// console.log(thing);
+		// 	thing.collided = true
+		// 	thing.erase()
+		// 	return true
+		// }
+		// if (distY <= (thing.height/2 && thing.collided ===false)) {
+		// 	// console.log(thing);
+		// 	thing.collided = true
+		// 	thing.erase()
+		// 	return true
+		// }
 	}
 }
 
@@ -228,7 +268,7 @@ const game = {
 	//into next week, think about how these could be spaced better (to prevent overlap)
 	//are there css properties to tap into? padding?
 	createPiggies(){
-		for (let i=0; i < (this.level*30)/3;i++){
+		for (let i=0; i < (this.level*10)/3;i++){
 			//create pigs at random places on the map
 			let piggie = new Piggy((Math.floor(Math.random() * 800)), (Math.floor(Math.random() * 600)))
 			piggie.draw()
@@ -244,7 +284,7 @@ const game = {
 		}
 	},
 	createPigeons(){
-		for (let i=0; i < (this.level*25)/3;i++){
+		for (let i=0; i < (this.level*10)/3;i++){
 			//create pigs at random places on the map
 			let pigeon = new Pigeon((Math.floor(Math.random() * 800)), (Math.floor(Math.random() * 600)))
 			pigeon.draw()
@@ -414,7 +454,7 @@ const game = {
 	//need to figure out why this function keeps running even
 	//even when timer is out
 	makeNewPigsandPigeonsInterval: function (){
-		if (this.started === true){
+		if (this.started === true && this.timer %5 ===0){
 			this.timerHandle = setInterval(()=>{	
 				this.keepMakingPigsAndPigeons()
 
@@ -423,6 +463,7 @@ const game = {
 					console.log("Should I be here?");
 				}
 			}, 5000)
+			console.log(this.timerHandle)
 		}
 	},
 	//is there a way to do the reset without messing up the CSS?
@@ -566,22 +607,25 @@ reset.addEventListener('click', () =>{
 
 document.addEventListener('keydown',(event) =>{
 	if (game.playerOne !== null){
+		console.log("Player one exists and the keystrokes should console log");
  		if(['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(event.key)) {
     		game.playerOne.move(event.key)
+    		console.log("Keystrokes are console logging", event.key);
  	 	}
-		game.playerOne.move(event.key)
 		game.checkIfPlayerOneCollidesWithPiggie()
 		game.checkIfPlayerOneCollidesWithPigeon()
 
 	}
 
 	if (game.playerTwoScoreBoardExists === true){
+		console.log("PlayerTwoScoreboard exists and keystrokes shuld console log");
 		if(['w', 'a', 's', 'd'].includes(event.key)) {
+    		console.log("Keystrokes are console logging", event.key);
     		game.playerTwo.move(event.key)
+
  		}
 		game.checkIfPlayerTwoCollideswithPigeon()
 		game.checkIfPlayerTwoCollidesWithPiggie()
-		game.playerTwo.move(event.key)
 		}
 
 	game.updateScoreboard()
@@ -593,15 +637,13 @@ function animate() {
 
 	// game.playerOne.move()
 
-// game.makeNewPigsandPigeonsInterval()
+	game.makePigsAndPigeonsFly()
 
-// game.makePigsAndPigeonsFly()
+	window.requestAnimationFrame(animate)
 
-window.requestAnimationFrame(animate)
 }
 
-// animate();
-
+animate();
 
 //build the game/collision logic including the score updating
 //done
