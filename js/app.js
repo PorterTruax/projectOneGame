@@ -34,81 +34,102 @@ class Falcon{
 		ctx.clearRect(this.x-this.r, this.y-this.r, 2*this.r, 2*this.r)
 	}
 	move(){
-		if (this.direction.up === true) {
+		if (this.direction.up === true && this.y >= 0) {
 			this.y -= this.speed;
 			this.clear()
 			this.draw()
 		}
-    	if(this.direction.left === true) {
+    	if(this.direction.left === true && this.x >= 0) {
     		this.x -= this.speed;
     		this.clear
     		this.draw()
     	}
 
-    	if(this.direction.right === true) { 
+    	if(this.direction.right === true && this.x <= canvas.width) { 
     		this.x += this.speed;
     		this.clear()
     		this.draw()
     	} 
 
-    	if(this.direction.down === true) { 
+    	if(this.direction.down === true && this.y <= canvas.height) { 
     		this.y += this.speed;
     		this.clear()
     		this.draw()
     	}
 	}
-	// setDirection(key){
-	// 	if(key == "ArrowUp" || key == "w")this.direction.up = true;
-	// 	if(key == "ArrowLeft" || key == "a")this.direction.left = true;
-	// 	if(key == "ArrowDown" || key == "s")this.direction.down = true;
-	// 	if(key == "ArrowRight" || key == "d")this.direction.right = true;
-	// }
-	// unsetDirection(key){
-	// 	if(key == "ArrowUp" || key == "w")this.direction.up = false;
-	// 	if(key == "ArrowLeft" || key == "a")this.direction.left = false;
-	// 	if(key == "ArrowDown" || key == "s")this.direction.down = false;
-	// 	if(key == "ArrowRight" || key == "d")this.direction.right = false;
-	// }
 	checkCollision(thing){
 		//collision from the left
 		if ((this.x + this.r) >= thing.x
 			&& this.y >= thing.y
 			&& this.y <= (thing.height +thing.y)
-			&& (this.x+this.r) <= thing.x + thing.width){
+			&& (this.x+this.r) <= thing.x + thing.width
+			&& thing.collided === false){
 				thing.collided = true
 				thing.erase()
-				return true
+				console.log("There's been a collision")
+				
+			// 	if (thing.name === "piggy"){
+			// 		console.log("You've hit a pig");
+			// 		game.playerOneScore += thing.scoreImpact
+			// 		game.updateScoreboard()
+			// }
 		}
 		//collision from above
 		if ((this.y+this.r) >= thing.y
 			&& (this.y +this.r) <= thing.y + thing.height
 			&& this.x >= thing.x
-			&& this.x <= (thing.x +thing.width)){
+			&& this.x <= (thing.x +thing.width)
+			&& thing.collided === false){
 				thing.collided = true
 				thing.erase()
-				return true
+				console.log("There's been a collision")
+			// 	if (thing.name === "piggy"){
+			// 		console.log("You've hit a pig")
+			// 		game.playerOneScore += thing.scoreImpact
+			// 		game.updateScoreboard()
+			// }
 		}
 
 		//collision from right
 		if ((this.x-this.r)<= (thing.x +thing.width)
 			&& (this.x-this.r) >= (thing.x)
 			&& (this.y) >= thing.y
-			&& (this.y) <= (thing.y+thing.height)){
+			&& (this.y) <= (thing.y+thing.height)
+			&& thing.collided === false){
 				thing.collided = true
 				thing.erase()
-				return true
-			}
+				console.log("There's been a collision")
+				
+				// if (thing.name === "piggy"){
+				// 	console.log("You've hit a pig")
+				// 	game.playerOneScore += thing.scoreImpact
+				// 	game.updateScoreboard()
+				// }
+
+				// if (thing.name ==="pigeon"){
+				// 	console.log("You've hit a pigeon")
+				// 	game.playe;
+				// }
+
+
 
 		//collision from below
 		if ((this.y-this.r) <= (thing.y+thing.height)
 			&& (this.y-this.r) >= thing.y
 			&& this.x >= thing.x
-			&& this.x <= (thing.x + thing.width)){
+			&& this.x <= (thing.x + thing.width)
+			&& thing.collided === false){
 				thing.collided = true
 				thing.erase()
-				return true
+				console.log("There's been a collision")
+			// 	if (thing.name === "piggy"){
+			// 		console.log("You've hit a pig")
+			// 		game.playerOneScore += thing.scoreImpact
+			// 		game.updateScoreboard()
+			// }
 		}
 	}
+}
 }
 
 class Piggy{
@@ -121,6 +142,7 @@ class Piggy{
 		this.collided = false
 		this.scoreImpact = -5
 		this.speed = -1
+		this.name = "piggy"
 	}
 	draw(){
 		ctx.beginPath();
@@ -159,6 +181,7 @@ class Pigeon{
 		this.collided = false
 		this.scoreImpact = -1
 		this.speed = -1
+		this.name = "pigeon"
 	}
 	draw(){
 		ctx.beginPath();
@@ -256,6 +279,7 @@ const game = {
 		for (let i=0; i < this.piggies.length; i++){
 			if (this.playerOne.checkCollision(this.piggies[i])){
 				this.playerOneScore -= 5
+				this.updateScoreboard()
 				// this.piggies[i].erase()
 			}
 		}
@@ -264,6 +288,8 @@ const game = {
 		for(let i =0; i< this.pigeons.length; i++){
 			if (this.playerOne.checkCollision(this.pigeons[i])){
 				this.playerOneScore +=1
+				this.updateScoreboard()
+				console.log("Console logging pigeon collision");
 			}
 		}
 	},
@@ -271,6 +297,8 @@ const game = {
 		for (let i =0; i <this.pigeons.length; i++){
 			if (this.playerTwo.checkCollision(this.pigeons[i])){
 				this.playerTwoScore +=1
+				this.updateScoreboard()
+
 			}
 		}
 	},
@@ -278,6 +306,9 @@ const game = {
 		for (let i =0; i <this.piggies.length; i++){
 			if (this.playerTwo.checkCollision(this.piggies[i])){
 				this.playerTwoScore -=5
+				this.updateScoreboard()
+				console.log("Console logging pigeon collision");
+
 			}
 		}
 	},
@@ -639,6 +670,8 @@ let x = 0;
 function animate() {
 	if (game.started === true){
 		game.playerOne.move()
+		clearCanvas()
+		game.playerOne.draw()
 
 		game.checkIfPlayerOneCollidesWithPiggie()
 		game.checkIfPlayerOneCollidesWithPigeon()
@@ -654,7 +687,6 @@ function animate() {
 		}
 
 		game.makePigsAndPigeonsFly()
-
 	}
 
 	window.requestAnimationFrame(animate)
