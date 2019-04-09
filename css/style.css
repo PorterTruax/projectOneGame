@@ -23,6 +23,12 @@ a {
 	text-decoration: none;
 }
 
+.startButtons{
+	display:flex;
+	flex-wrap: row;
+	justify-content: center;
+}
+
 .bigDiv {
 	margin: 0 auto;
 	background-color: #A43820;

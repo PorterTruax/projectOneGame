@@ -6,6 +6,19 @@ console.log(canvas);
 const ctx = canvas.getContext('2d');
 console.log(ctx);
 
+
+//global variables
+
+let timerDiv = document.getElementById('timer')
+let playerTwoScore = document.getElementById('playerTwoScoreboard')
+let congrats = document.getElementById('congratulations')
+let lost = document.getElementById('lost')
+let reset = document.getElementById('reset')
+let playAgain = document.getElementById('playAgain')
+let startButtons = document.getElementsByClassName('startButtons')
+let startGame = document.getElementById('start')
+let startGame2Players = document.getElementById('start2')
+
 //graphics
 // let falconPicture = document.getElementById('falcon')
 // let pigPicture = document.getElementById('flyingPig')
@@ -296,23 +309,44 @@ const game = {
 	decreaseTime: function (){
 		if(this.started === true){
 			this.timerHandle = setInterval(()=>{
+
+				this.makePigsAndPigeonsFly()
+
+				if (this.timer % 5 === 0){
+					this.keepMakingPigsAndPigeons()
+				}
+
 				this.timer -= 1
 				// console.log(this.timer);
 				this.updateTimerDisplay()
 
-				this.makePigsAndPigeonsFly()
 				console.log(this.timer)
 
 				//end the game
-				if(this.timer <= 0){
+				if(this.timer <= 0 || this.started === false){
 					clearInterval(this.timerHandle)
 					console.log("game over");
 					this.endLevel()
 					this.updateLevelThreshold()
 				}
-				}, 500)
+				}, 1000)
 			}
 	},
+	// //need to figure out why this function keeps running even
+	// //even when timer is out
+	// makeNewPigsandPigeonsInterval: function (){
+	// 	if (this.started === true && this.timer % 5 ===0){
+	// 		this.timerHandle = setInterval(()=>{	
+	// 			this.keepMakingPigsAndPigeons()
+
+	// 				if (this.timer <= 0 || this.endCreatingPigsPigeons ===true){
+	// 				clearInterval(this.timerHandle)
+	// 				console.log("Should I be here?");
+	// 			}
+	// 		}, 5000)
+	// 		console.log(this.timerHandle)
+	// 	}
+	// },
 	updateTimerDisplay(){
 		let timerDiv = document.getElementById('timer')
 		timerDiv.textContent =`${this.timer}` 
@@ -415,57 +449,27 @@ const game = {
 			this.levelEnd = false
 		}
 	},
-	//need to figure out why this function keeps running even
-	//even when timer is out
-	makeNewPigsandPigeonsInterval: function (){
-		if (this.started === true && this.timer % 5 ===0){
-			this.timerHandle = setInterval(()=>{	
-				this.keepMakingPigsAndPigeons()
-
-					if (this.timer <= 0 || this.endCreatingPigsPigeons ===true){
-					clearInterval(this.timerHandle)
-					console.log("Should I be here?");
-				}
-			}, 5000)
-			console.log(this.timerHandle)
-		}
-	},
 	//is there a way to do the reset without messing up the CSS?
 	resetGame(){
 		clearCanvas()
-		this.timer = 30
+		this.timer = 31
 		this.level = 0
 		let levelDisplay = document.getElementById('level')
 		levelDisplay.textContent = `Level: ${this.level}`
 
-		// clearCanvas()
-		// this.timer = 30
-		// this.level = 1		
+
+		// startButtons.style.display = "flex"
+		// startButtons.style.justifyContent = "center"
 
 		if (this.playerOne !== null){
 			this.playerOne = null
-			this.playerOne.score = 0
-			this.updateScoreboard()
-			this.updateTimerDisplay()
 		}
 
 		if (this.playerTwo !== null){
-			this.playerTwo.score= 0
-			// this.playerTwoScoreBoardExists = false
-			// this.playerTwo.onSwitch = true
 			this.playerTwo = null
-			this.playerTwoScoreBoardExists = false
 		}
 
-		// this.endCreatingPigsPigeons = true
-
-		
-		let startGame = document.getElementById('start')
-		startGame.style.display = 'block'
-		canvas.style.display ='block'
-		canvas.style.textAlign = "center"
-		startGame2Players.style.display ='block'
-		playerTwoScoreboard.style.display = 'none'
+		this.started = false
 
 	}
 }
@@ -489,14 +493,6 @@ const game = {
 
 // //initialState (get the divs we're going to update throughout the game, set and hide
 // them as need be)
-let timerDiv = document.getElementById('timer')
-let playerTwoScore = document.getElementById('playerTwoScoreboard')
-let congrats = document.getElementById('congratulations')
-let lost = document.getElementById('lost')
-let reset = document.getElementById('reset')
-let playAgain = document.getElementById('playAgain')
-let startGame = document.getElementById('start')
-let startGame2Players = document.getElementById('start2')
 
 
 function clearCanvas() {
@@ -532,7 +528,7 @@ startGame.addEventListener('click',() =>{
 			game.makePigsAndPigeonsFly()
 
 			//keep making pigs/pigeons on the map oninterval
-			game.makeNewPigsandPigeonsInterval()
+			// game.makeNewPigsandPigeonsInterval()
 
 			//roll the timer
 			game.decreaseTime()
@@ -542,7 +538,6 @@ startGame.addEventListener('click',() =>{
 
 			//update level threshold when level ends
 			// game.updateLevelThreshold()
-			startGame.style.display = 'none'
 
 	}
 })
@@ -559,34 +554,25 @@ startGame2Players.addEventListener('click',() => {
 			game.createPlayerTwo()
 			game.createPiggies()
 			game.createPigeons()
-			// console.log(timerDiv);
-			
-			//make pigs/pigeons move
-			// game.makePigsAndPigeonsFly()
-
-			//keep making pigs/pigeons on the map oninterval
-			game.makeNewPigsandPigeonsInterval()
-
-			//roll the timer
+	
 			game.decreaseTime()
 
 			// //end level
 			// game.endLevel()
-
 			//update level threshold when level ends
 			// game.updateLevelThreshold()
-			
-			startGame.style.display = 'none'
-			startGame2Players.style.display='none'
+
+			// startGame.style.display = 'none'
+			// startGame2Players.style.display='none'
 	}
 
 })
 
 
-playAgain.addEventListener('click',() => {
-	game.resetGame()
-	lost.style.display = "none"
-})
+// playAgain.addEventListener('click',() => {
+// 	game.resetGame()
+// 	lost.style.display = "none"
+// })
 
 reset.addEventListener('click', () =>{
 	game.resetGame()
@@ -696,7 +682,6 @@ function animate() {
 			clearCanvas()
 			game.playerTwo.draw()
 			game.playerOne.draw()
-
 			game.checkIfPlayerTwoCollidesWithPigeon()
 			game.checkIfPlayerTwoCollidesWithPiggie()
 		}
@@ -714,60 +699,3 @@ console.log(game.playerTwo);
 
 animate();
 
-//build the game/collision logic including the score updating
-//done
-
-//then do the timer
-//done
-
-//once the timer and score are done, set the goal threshold
-//done
-
-//edit the pigs and pigeons so that they can "fly"
-//done
-
-// //level design (i.e. how many pigs, pigeons, goal threshold  will be altered to reflect
-// a mathematical relationship to the level number) 
-//done
-
-//build reset button
-//done
-
-//if both 
-
-//build the infrastructure for multiplayer -- maybe make player number a property of
-//the bird object the commands that move the player two are different from player 1 and 
-//player two scoreboard gets updated.... rather then have the players go in rounds
-//have the players play simultaneously
-
-
-// this.playerOne.move = function(key){
-// 	if (game.started === true
-// 		&& key === "ArrowDown"
-// 		&& (this.y+this.r) < canvas.height){
-// 			this.clear()
-// 			this.y += this.speed
-// 			this.draw()
-// 	}
-// if (game.started === true
-// 		&& key === "ArrowUp"
-// 		&& (this.y-this.r) > 0){
-// 			this.clear()
-// 			this.y-= this.speed
-// 			this.draw()
-// 	}
-// if (game.started === true 
-// 		&& key === "ArrowRight"
-// 		&& (this.x+this.r) < canvas.width){
-// 			this.clear()
-// 			this.x += this.speed
-// 			this.draw()
-// 	}
-// if (game.started === true
-// 		&& key === "ArrowLeft"
-// 		&& (this.x-this.r) > 0){
-// 			this.clear()
-// 			this.x-=this.speed
-// 			this.draw()
-// 	}
-// }
