@@ -6,6 +6,11 @@ console.log(canvas);
 const ctx = canvas.getContext('2d');
 console.log(ctx);
 
+//graphics
+let falconPicture = document.getElementById('falcon')
+let pigPicture = document.getElementById('flyingPig')
+let pigeonPicture = document.getElementById('pigeon')
+
 //we'll need a class each for the bird, the pigs, and the pigeons
 class Falcon{
 	constructor(x,y){
@@ -17,6 +22,7 @@ class Falcon{
 		this.y=y
 		this.r = 15
 		this.score = 0
+		this.onSwitch = true
 		this.direction = {
 			up: false,
 			down: false,
@@ -35,24 +41,24 @@ class Falcon{
 		ctx.clearRect(this.x-this.r, this.y-this.r, 2*this.r, 2*this.r)
 	}
 	move(){
-		if (this.direction.up === true && (this.y-this.r) >= 0) {
+		if (this.onSwitch === true && this.direction.up === true && (this.y-this.r) >= 0) {
 			this.y -= this.speed;
 			this.clear()
 			this.draw()
 		}
-    	if(this.direction.left === true && (this.x-this.r) >= 0) {
+    	if(this.onSwitch === true && this.direction.left === true && (this.x-this.r) >= 0) {
     		this.x -= this.speed;
     		this.clear
     		this.draw()
     	}
 
-    	if(this.direction.right === true && (this.x+this.r) <= canvas.width) { 
+    	if(this.onSwitch === true && this.direction.right === true && (this.x+this.r) <= canvas.width) { 
     		this.x += this.speed;
     		this.clear()
     		this.draw()
     	} 
 
-    	if(this.direction.down === true && (this.y+this.r) <= canvas.height) { 
+    	if(this.onSwitch === true && this.direction.down === true && (this.y+this.r) <= canvas.height) { 
     		this.y += this.speed;
     		this.clear()
     		this.draw()
@@ -64,7 +70,8 @@ class Falcon{
 			&& this.y >= thing.y
 			&& this.y <= (thing.height +thing.y)
 			&& (this.x+this.r) <= thing.x + thing.width
-			&& thing.collided === false){
+			&& thing.collided === false
+			&& this.onSwitch === true){
 				thing.collided = true
 				thing.erase()
 				console.log("There's been a collision")
@@ -77,7 +84,8 @@ class Falcon{
 			&& (this.y +this.r) <= thing.y + thing.height
 			&& this.x >= thing.x
 			&& this.x <= (thing.x +thing.width)
-			&& thing.collided === false){
+			&& thing.collided === false
+			&& this.onSwitch === true){
 				thing.collided = true
 				thing.erase()
 				console.log("There's been a collision")
@@ -90,7 +98,8 @@ class Falcon{
 			&& (this.x-this.r) >= (thing.x)
 			&& (this.y) >= thing.y
 			&& (this.y) <= (thing.y+thing.height)
-			&& thing.collided === false){
+			&& thing.collided === false
+			&& this.onSwitch === true){
 				thing.collided = true
 				thing.erase()
 				console.log("There's been a collision")
@@ -103,7 +112,8 @@ class Falcon{
 			&& (this.y-this.r) >= thing.y
 			&& this.x >= thing.x
 			&& this.x <= (thing.x + thing.width)
-			&& thing.collided === false){
+			&& thing.collided === false
+			&& this.onSwitch === true){
 				thing.collided = true
 				thing.erase()
 				this.score += thing.scoreImpact
@@ -120,7 +130,7 @@ class Piggy{
 		this.width = 25
 		this.height = 25
 		this.collided = false
-		this.scoreImpact = -5
+		this.scoreImpact = -2
 		this.speed = -2
 		this.name = "piggy"
 	}
@@ -160,7 +170,7 @@ class Pigeon{
 		this.height = 15
 		this.collided = false
 		this.scoreImpact = 1
-		this.speed = -2
+		this.speed = -3
 		this.name = "pigeon"
 	}
 	draw(){
@@ -205,11 +215,11 @@ const game = {
 	levelThreshold: 1,
 	endCreatingPigsPigeons: false,
 	createPlayerOne(){
-		this.playerOne = new Falcon(450,200)
+		this.playerOne = new Falcon(250,200)
 		this.playerOne.draw()
 	},
 	createPlayerTwo(){
-		this.playerTwo = new Falcon(350, 200)
+		this.playerTwo = new Falcon(450, 200)
 		this.playerTwo.color = "green"
 		this.playerTwoScoreBoardExists = true
 		this.playerTwo.draw()
@@ -217,7 +227,7 @@ const game = {
 	createPiggies(){
 		for (let i=0; i < (this.level*10)/3;i++){
 			//create pigs at random places on the map
-			let piggie = new Piggy((Math.floor(Math.random() * 800)), (Math.floor(Math.random() * 600)))
+			let piggie = new Piggy((Math.floor(Math.random() * canvas.width)), (Math.floor(Math.random() * canvas.height)))
 			piggie.draw()
 			this.piggies.push(piggie)
 		}
@@ -233,7 +243,7 @@ const game = {
 	createPigeons(){
 		for (let i=0; i < (this.level*10)/3;i++){
 			//create pigs at random places on the map
-			let pigeon = new Pigeon((Math.floor(Math.random() * 800)), (Math.floor(Math.random() * 600)))
+			let pigeon = new Pigeon((Math.floor(Math.random() * canvas.width)), (Math.floor(Math.random() * canvas.height)))
 			pigeon.draw()
 			this.pigeons.push(pigeon)
 		}
@@ -242,12 +252,12 @@ const game = {
 	keepMakingPigsAndPigeons(){
 		//make pigs and pigeons in the lower half of map 
 		for (let i=0; i < (this.level*10)/3;i++){
-			let pigeon = new Pigeon((Math.floor(Math.random()* 800)), (Math.floor(Math.random() *200)+400))
+			let pigeon = new Pigeon((Math.floor(Math.random()* canvas.width)), (Math.floor(Math.random() *200)+canvas.height))
 			pigeon.draw()
 			this.pigeons.push(pigeon)
 		}
 		for (let i=0; i < (this.level*5)/3;i++){
-			let piggie = new Piggy((Math.floor(Math.random() * 800)), (Math.floor(Math.random() * 200)+400))
+			let piggie = new Piggy((Math.floor(Math.random() * canvas.width)), (Math.floor(Math.random() * 200)+canvas.height))
 			piggie.draw()
 			this.piggies.push(piggie)
 		}
@@ -342,27 +352,28 @@ const game = {
 				reset.style.display ='none'
 				this.started = false
 			}
-		else {
+		if (this.playerTwoScoreBoardExists === true) {
 			if (this.timer === 0 
 				&& this.playerTwo.score < this.levelThreshold
 				&& this.playerOne.score >= this.levelThreshold){
 					console.log("Congratulations, player one! You can keep playing.")
 					//remove player two
 					this.playerTwo.clear()
-					this.playerTwo = null
+					this.playerTwo.onSwitch = false
 					this.levelEnd = true 
 					congrats.style.display="block"
-					congrats.textContent= "Congrats Player One! You beat the level. Onto the next one."
+					congrats.textContent= "Congrats Player One! You beat the level. Onto the next one. Player Two, you're frozen. Sorry!"
+					playerTwoScore.style.display = 'none'
 			}
 			if (this.timer === 0
 				&& this.playerOne.score < this.levelThreshold
 				&& this.playerTwo.score >= this.levelThreshold){
 					console.log("Congratulations player two! You can keep playing.")
 					this.playerOne.clear()
+					this.playerOne.onSwitch = false
 					this.levelEnd = true
 					congrats.style.display="block"
-					this.playerOne = null
-					congrats.textContent = "Congrats Player Two! You beat the level. Onto the next one."
+					congrats.textContent = "Congrats Player Two! You beat the level. Onto the next one. Player One, you're frozen. Sorry!"
 			
 			}
 			if (this.timer === 0
@@ -371,6 +382,7 @@ const game = {
 					console.log("Neither player advances");
 					canvas.style.display ='none'
 					lost.style.display = "block"
+					congrats.textContent = "Womp. No one advances."
 					this.started = false
 			}
 			if (this.timer === 0
@@ -387,7 +399,7 @@ const game = {
 	updateLevelThreshold(){
 		this.levelThreshold = this.level*5
 		let goalThresholdDisplay = document.getElementById('levelThreshold')
-		goalThresholdDisplay.textContent =`Goal Threshold: ${this.levelThreshold}`
+		goalThresholdDisplay.textContent =`Pigeons to eat: ${this.levelThreshold}`
 		
 		if (this.levelEnd === true){
 			this.level += 1
@@ -430,16 +442,22 @@ const game = {
 		let levelDisplay = document.getElementById('level')
 		levelDisplay.textContent = `Level: ${this.level}`		
 		this.updateTimerDisplay()
-
-		this.playerTwo.score= 0
 		this.playerOne.score = 0
 		this.updateScoreboard()
 
-		this.playerTwoScoreBoardExists = false
+		if (this.playerTwo !== null){
+			// this.playerTwo.score= 0
+			// this.playerTwoScoreBoardExists = false
+			// this.playerTwo.onSwitch = true
+			this.playerTwo = null
+			this.playerTwoScoreBoardExists = false
+		}
+
 		
 		let startGame = document.getElementById('start')
 		startGame.style.display = 'block'
 		canvas.style.display ='block'
+		canvas.style.textAlign = "center"
 		startGame2Players.style.display ='block'
 		playerTwoScoreboard.style.display = 'none'
 
@@ -484,6 +502,7 @@ function clearCanvas() {
 
 
 canvas.style.display ='none'
+canvas.style.textAlign ="center"
 congrats.style.display = 'none'
 lost.style.display='none'
 
@@ -493,6 +512,7 @@ lost.style.display='none'
 startGame.addEventListener('click',() =>{
 	if (game.started === false){
 			canvas.style.display ='block'
+			canvas.style.textAlign ="center"
 			game.started = true
 			game.endCreatingPigsPigeons = false
 
@@ -524,6 +544,7 @@ startGame.addEventListener('click',() =>{
 startGame2Players.addEventListener('click',() => {
 	if (game.started === false){
 			canvas.style.display ='block'
+			canvas.style.textAlign ="center"
 			game.started= true
 			game.endCreatingPigsPigeons = false
 
@@ -564,6 +585,17 @@ playAgain.addEventListener('click',() => {
 reset.addEventListener('click', () =>{
 	game.resetGame()
 })
+
+
+window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if(e.key === "ArrowUp" 
+    	|| e.key === "ArrowDown" 
+    	|| e.key === "ArrowLeft"  
+    	|| e.key === "ArrowRight" ) {
+        e.preventDefault();
+    }
+}, false);
 
 
 document.addEventListener('keydown',(event) =>{

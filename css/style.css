@@ -2,10 +2,95 @@ body {
 	text-align: center
 }
 
+h1 {
+	font-size: 125px;
+	color: white;
+}
+
 canvas {
 	background-image: url(http://upload.wikimedia.org/wikipedia/commons/c/ca/Hagalund_blue_skyscraper.jpg)
 }
 
 button {
 	background-color: red;
+	font-family: 'Bangers', cursive;
+	color:white;
+}
+
+a {
+	color:white;
+	text-decoration: none;
+}
+
+.bigDiv {
+	background-color: #A43820;
+	display: flex;
+	flex-direction: column;
+	font-family: 'Bangers', cursive;
+}
+
+#instructions {
+	color: white;
+	font-family: 'Oswald', sans-serif;
+	font-size: 25px;
+	margin-top: -45px;
+}
+
+#really {
+	font-style: italic;
+	color: #F9DC24;
+}
+
+.bolded{
+	font-style: bold;
+	color: #F9DC24;
+}
+
+#attack {
+	color: #F9DC24;
+	text-decoration: underline;
+}
+#timer {
+	color: white;
+	font-size: 35px;
+}
+
+#scoreboard {
+	display: flex;
+	flex-wrap: row;
+	justify-content: space-around;
+}
+
+#playerOneScoreboard {
+	color: white;
+	font-size: 21px;
+}
+
+#playerTwoScoreboard {
+	color:white;
+	font-size: 21px;
+}
+
+#level {
+	color:white;
+	font-size: 21px;
+}
+
+#levelThreshold{
+	color:white;
+	font-size: 16px;
+}
+
+#congratulations{
+	color:white;
+	font-size: 35px
+}
+
+#lost{
+	color:white;
+	font-size: 35px
+}
+
+#graphicsDiv{
+	display: none;
 }
