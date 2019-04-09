@@ -7,9 +7,9 @@ const ctx = canvas.getContext('2d');
 console.log(ctx);
 
 //graphics
-let falconPicture = document.getElementById('falcon')
-let pigPicture = document.getElementById('flyingPig')
-let pigeonPicture = document.getElementById('pigeon')
+// let falconPicture = document.getElementById('falcon')
+// let pigPicture = document.getElementById('flyingPig')
+// let pigeonPicture = document.getElementById('pigeon')
 
 //we'll need a class each for the bird, the pigs, and the pigeons
 class Falcon{
@@ -32,10 +32,9 @@ class Falcon{
 		}
 	}
 	draw(){
-		ctx.beginPath()
-		ctx.arc(this.x, this.y,this.r, 0 ,2*Math.PI)
-		ctx.fillStyle= this.color
-		ctx.fill()
+		const falconImage = new Image();
+		falconImage.src = "images/falconPicture.png"
+		ctx.drawImage(falconImage,this.x, this.y)
 	}
 	clear(){
 		ctx.clearRect(this.x-this.r, this.y-this.r, 2*this.r, 2*this.r)
@@ -131,14 +130,13 @@ class Piggy{
 		this.height = 25
 		this.collided = false
 		this.scoreImpact = -2
-		this.speed = -2
+		this.speed = -(Math.random())
 		this.name = "piggy"
 	}
 	draw(){
-		ctx.beginPath();
-		ctx.rect(this.x, this.y, this.width, this.height)
-		ctx.fillStyle=this.color
-		ctx.fill()
+		const pigImage = new Image();
+		pigImage.src = "images/pigs.png"
+		ctx.drawImage(pigImage, this.x, this.y)
 	}
 	erase(){
 		if (this.collided === true){
@@ -170,14 +168,13 @@ class Pigeon{
 		this.height = 15
 		this.collided = false
 		this.scoreImpact = 1
-		this.speed = -3
+		this.speed = -2
 		this.name = "pigeon"
 	}
 	draw(){
-		ctx.beginPath();
-		ctx.rect(this.x, this.y, this.width, this.height)
-		ctx.fillStyle=this.color
-		ctx.fill()
+		const pigeonImage = new Image();
+		pigeonImage.src = "images/pigeon.png"
+		ctx.drawImage(pigeonImage,this.x, this.y)
 	}
 	erase(){
 		if (this.collided === true){
@@ -251,12 +248,12 @@ const game = {
 	},
 	keepMakingPigsAndPigeons(){
 		//make pigs and pigeons in the lower half of map 
-		for (let i=0; i < (this.level*10)/3;i++){
+		for (let i=0; i < (this.level*15)/3;i++){
 			let pigeon = new Pigeon((Math.floor(Math.random()* canvas.width)), (Math.floor(Math.random() *200)+canvas.height))
 			pigeon.draw()
 			this.pigeons.push(pigeon)
 		}
-		for (let i=0; i < (this.level*5)/3;i++){
+		for (let i=0; i < (this.level*10)/3;i++){
 			let piggie = new Piggy((Math.floor(Math.random() * canvas.width)), (Math.floor(Math.random() * 200)+canvas.height))
 			piggie.draw()
 			this.piggies.push(piggie)
@@ -307,7 +304,7 @@ const game = {
 				console.log(this.timer)
 
 				//end the game
-				if(this.timer <= 0 || this.started === false){
+				if(this.timer <= 0){
 					clearInterval(this.timerHandle)
 					console.log("game over");
 					this.endLevel()
@@ -421,11 +418,11 @@ const game = {
 	//need to figure out why this function keeps running even
 	//even when timer is out
 	makeNewPigsandPigeonsInterval: function (){
-		if (this.started === true && this.timer %5 ===0){
+		if (this.started === true && this.timer % 5 ===0){
 			this.timerHandle = setInterval(()=>{	
 				this.keepMakingPigsAndPigeons()
 
-					if (this.timer <= 0){
+					if (this.timer <= 0 || this.endCreatingPigsPigeons ===true){
 					clearInterval(this.timerHandle)
 					console.log("Should I be here?");
 				}
@@ -435,23 +432,32 @@ const game = {
 	},
 	//is there a way to do the reset without messing up the CSS?
 	resetGame(){
-		ctx.clearRect(0,0, canvas.width, canvas.height)
+		clearCanvas()
 		this.timer = 30
-		this.level = 1
-		this.started = false
+		this.level = 0
 		let levelDisplay = document.getElementById('level')
-		levelDisplay.textContent = `Level: ${this.level}`		
-		this.updateTimerDisplay()
-		this.playerOne.score = 0
-		this.updateScoreboard()
+		levelDisplay.textContent = `Level: ${this.level}`
+
+		// clearCanvas()
+		// this.timer = 30
+		// this.level = 1		
+
+		if (this.playerOne !== null){
+			this.playerOne = null
+			this.playerOne.score = 0
+			this.updateScoreboard()
+			this.updateTimerDisplay()
+		}
 
 		if (this.playerTwo !== null){
-			// this.playerTwo.score= 0
+			this.playerTwo.score= 0
 			// this.playerTwoScoreBoardExists = false
 			// this.playerTwo.onSwitch = true
 			this.playerTwo = null
 			this.playerTwoScoreBoardExists = false
 		}
+
+		// this.endCreatingPigsPigeons = true
 
 		
 		let startGame = document.getElementById('start')

@@ -8,7 +8,8 @@ h1 {
 }
 
 canvas {
-	background-image: url(http://upload.wikimedia.org/wikipedia/commons/c/ca/Hagalund_blue_skyscraper.jpg)
+	background-image: url(file:///Users/portertruax/june-bugs/projectOne/images/chicago.jpg);
+	border: solid black;
 }
 
 button {
@@ -23,6 +24,7 @@ a {
 }
 
 .bigDiv {
+	margin: 0 auto;
 	background-color: #A43820;
 	display: flex;
 	flex-direction: column;
