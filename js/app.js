@@ -86,7 +86,7 @@ class Falcon{
 			&& this.onSwitch === true){
 				thing.collided = true
 				thing.erase()
-				console.log("There's been a collision")
+				// console.log("There's been a collision")
 				this.score += thing.scoreImpact
 				game.updateScoreboard()
 		}
@@ -99,7 +99,7 @@ class Falcon{
 			&& this.onSwitch === true){
 				thing.collided = true
 				thing.erase()
-				console.log("There's been a collision")
+				// console.log("There's been a collision")
 				this.score += thing.scoreImpact
 			}
 
@@ -386,7 +386,7 @@ const game = {
 				//end the game
 				if(this.timer <= 0 || this.started === false){
 					clearInterval(this.timerHandle)
-					console.log("game over");
+					// console.log("game over");
 					this.endLevel()
 					this.updateLevelThreshold()
 				}
@@ -416,14 +416,14 @@ const game = {
 	},
 	endLevel(){
 			if (this.timer === 0 && this.playerOne.score >= this.levelThreshold){
-				console.log('Good, job player one! You beat the level and this is console logging correctly')
+				// console.log('Good, job player one! You beat the level and this is console logging correctly')
 				this.levelEnd = true
 				congrats.style.display="block"
 				congrats.textContent= "You beat the level onto the next one"
 			} 
 
 			if (this.timer===0 && this.playerOne.score < this.levelThreshold) {
-				console.log("Whoop :( Sorry, player one. you lost the level and this is console logging correctly");
+				// console.log("Whoop :( Sorry, player one. you lost the level and this is console logging correctly");
 				canvas.style.display ='none'
 				lost.style.display = "block"
 				reset.style.display ='none'
@@ -433,7 +433,7 @@ const game = {
 			if (this.timer === 0 
 				&& this.playerTwo.score < this.levelThreshold
 				&& this.playerOne.score >= this.levelThreshold){
-					console.log("Congratulations, player one! You can keep playing.")
+					// console.log("Congratulations, player one! You can keep playing.")
 					//remove player two
 					this.playerTwo.clear()
 					this.playerTwo.onSwitch = false
@@ -445,7 +445,7 @@ const game = {
 			if (this.timer === 0
 				&& this.playerOne.score < this.levelThreshold
 				&& this.playerTwo.score >= this.levelThreshold){
-					console.log("Congratulations player two! You can keep playing.")
+					// console.log("Congratulations player two! You can keep playing.")
 					this.playerOne.clear()
 					this.playerOne.onSwitch = false
 					this.levelEnd = true
@@ -455,7 +455,7 @@ const game = {
 			if (this.timer === 0
 				&& this.playerOne.score < this.levelThreshold
 				&& this.playerTwo.score < this.levelThreshold){
-					console.log("Neither player advances");
+					// console.log("Neither player advances");
 					canvas.style.display ='none'
 					lost.style.display = "block"
 					this.started = false
@@ -596,6 +596,8 @@ startGame2Players.addEventListener('click',() => {
 			game.createPiggies()
 			game.createPigeons()
 			game.createPlanes()
+
+			game.makePigsAndPigeonsFly()
 	
 			game.decreaseTime()
 
