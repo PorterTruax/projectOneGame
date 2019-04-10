@@ -16,6 +16,9 @@ button {
 	background-color: red;
 	font-family: 'Bangers', cursive;
 	color:white;
+	height: 25px;
+	width: 300px;
+	font-size: 18px;
 }
 
 a {
