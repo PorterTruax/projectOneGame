@@ -19,10 +19,7 @@ let startButtons = document.getElementsByClassName('startButtons')
 let startGame = document.getElementById('start')
 let startGame2Players = document.getElementById('start2')
 
-//graphics
-// let falconPicture = document.getElementById('falcon')
-// let pigPicture = document.getElementById('flyingPig')
-// let pigeonPicture = document.getElementById('pigeon')
+
 
 //we'll need a class each for the bird, the pigs, and the pigeons
 class Falcon{
@@ -39,7 +36,6 @@ class Falcon{
 		this.direction = {
 			up: false,
 			down: false,
-			//come back and test this
 			left: false,
 			right: false
 		}
@@ -149,8 +145,6 @@ class Piggy{
 	erase(){
 		if (this.collided === true){
 			ctx.clearRect(this.x, this.y, this.width, this.height)
-		// this.color = "grey"
-		// this.draw()
 		}
 	}
 	eraseToMove(){
@@ -275,6 +269,7 @@ const game = {
 		}
 	},
 	makePigsAndPigeonsFly(){
+		//make the pigs and pigeons move
 		for (let i=0; i < this.piggies.length;i++){
 			this.piggies[i].move()
 		}
@@ -292,6 +287,7 @@ const game = {
 	},
 	createPlanes(){
 		if (this.level > 2){
+			//make the planes on the left-hand side of the map
 			for (let i =0; i < (this.level)*2; i++){
 				let airplane = new Airplane(-10, Math.floor(Math.random()*canvas.height))
 				airplane.draw()
@@ -300,6 +296,7 @@ const game = {
 		}
 	},
 	makePlanesFly(){
+		//move the planes
 		for (let i=0; i <this.planes.length; i++){
 			this.planes[i].move()
 		}
@@ -322,7 +319,6 @@ const game = {
 			if (this.playerOne.checkCollision(this.piggies[i])){
 				this.playerOneScore+= this.piggies[i].scoreImpact
 				return true
-				// this.piggies[i].erase()
 			}
 		}
 	},
@@ -394,15 +390,17 @@ const game = {
 			}
 	},
 	updateTimerDisplay(){
+		//update the timer display
 		let timerDiv = document.getElementById('timer')
 		timerDiv.textContent =`${this.timer}` 
 	},
 	updateScoreboard(){ 
+
+		//get playerOneScoreboard ID
+		let playerOneScore = document.getElementById('playerOneScoreboard')
 			
-			let playerOneScore = document.getElementById('playerOneScoreboard')
-			
-			//set it
-			playerOneScore.textContent=`Player One Score: ${this.playerOne.score}`
+		//set it
+		playerOneScore.textContent=`Player One Score: ${this.playerOne.score}`
 		
 		if (this.playerTwo !== null){
 			
@@ -513,31 +511,11 @@ const game = {
 	}
 }
 
-// //add an animation function in the global scope
-// let x = 0;
-// function animate() {
-// 	//create the players
-// 	game.createPlayerOne()
-// 	if (game.playerTwoScoreBoardExists === true){
-// 		game.createPlayerTwo()
-// 	}
-
-// 	game.playerOne.move(playerKey)
-// 	game.playerTwo.move(player2Key)
-
-// 	window.requestAnimationFrame(animate)
-// }
-
-// animate();
-
-// //initialState (get the divs we're going to update throughout the game, set and hide
-// them as need be)
-
 
 function clearCanvas() {
   // you can erase smaller parts or just one shape
   // for convenience we erase it all
-  // this is usually what you want
+  // this is usually what we want
   ctx.clearRect(0, 0, canvas.width, canvas.height)  
 }
 
